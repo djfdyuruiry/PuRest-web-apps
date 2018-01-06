@@ -83,7 +83,7 @@ local function Process (path, humanReadableName, args)
 	end
 
     --- Run the process handle with the arguments specified, this
-    -- can only be called once. Error is thrown if there is an issue setting
+    -- can be called multiple times. An error is thrown if there is an issue setting
     -- up the process or any output was written to standard err from the process.
     --
     -- @return A string containing all the output from process standard out.
