@@ -1,0 +1,2105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>PuRest Web Server - User Documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/highlight/tomorrow-night.css">
+
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/highlight.pack.js"></script>
+
+    <script>
+        hljs.initHighlightingOnLoad();
+    </script>
+
+    <style>
+        .indent {
+            padding-left: 1.5em;
+        }
+    </style>
+
+</head>
+
+<body>
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+
+            <div class="row clearfix">
+                <div class="col-md-12 column">
+                    <!-- Page content -->
+                    <br/>
+                    <div class="jumbotron">
+                        <h1>
+                            PuRest Web Server
+                            <!-- TODO: update documentation to reflect current libs used and cfg  -->
+                        </h1>
+                        <p>
+                            A web application server coded in the Lua language,
+                            designed to run web apps also written in Lua. It supports many approaches to
+                            web development, from dynamic pages and web forms to web services and REST
+                            APIs. It is built on the Apache Portable Runtime, the foundation
+                            for the Apache web server, providing a stable runtime for cross-platform network I/O and multi-threading.
+                        <p>
+                            <a class="btn btn-primary btn-large" href="#">Install</a>
+                        </p>
+                    </div>
+                    <div class="list-group">
+                        <a href="#serverSetup" class="list-group-item active">Server Setup</a>
+                        <div class="list-group-item"><a href="#ubuntu">Installing on Ubuntu (or similar)</a></div>
+                        <div class="list-group-item"><a href="#win32">Installing on Other Systems</a></div>
+                        <div class="list-group-item"><a href="#configuration">Configuration</a></div>
+                        <div class="list-group-item"><a href="#envVars">Environment Variables</a></div>
+                        <div class="list-group-item"><a href="#luaPaths">Recommended Lua Paths</a></div>
+                        <div class="list-group-item"><a href="#startServer">Starting the Server</a></div>
+                        <a href="#sites" class="list-group-item active">Managing Sites</a>
+                        <div class="list-group-item"><a href="#createSite">Creating a Site</a></div>
+                        <div class="list-group-item"><a href="#siteConf">Configuration</a></div>
+                        <div class="list-group-item"><a href="#launchScripts">Launch Scripts</a></div>
+                        <div class="list-group-item"><a href="#fileDirServe">File/Directory Serving</a></div>
+                        <div class="list-group-item"><a href="#userSessions">User Sessions</a></div>
+                        <div class="list-group-item"><a href="#reqFilter">Request Filtering</a></div>
+                        <a href="#routeHandling" class="list-group-item active">Route Handling</a>
+                        <div class="list-group-item"><a href="#routeMaps">Building Route Maps</a></div>
+                        <div class="list-group-item"><a href="#defineRoute">Define a Route</a></div>
+                        <div class="list-group-item"><a href="#reqParams">Request Parameters</a></div>
+                        <div class="list-group-item"><a href="#httpState">HttpState Class</a></div>
+                        <div class="list-group-item"><a href="#respond">Responding to Requests</a></div>
+                        <div class="list-group-item"><a href="#errHandling">Error Handling</a></div>
+                        <div class="list-group-item"><a href="#restEx">Building an REST Web Service</a></div>
+                        <a href="#dyamicPages" class="list-group-item active">Dynamic Pages</a>
+                        <div class="list-group-item"><a href="#lhtml">Lua-HTML</a></div>
+                        <div class="list-group-item"><a href="#scriptEnv">Scripting Environment</a></div>
+                        <div class="list-group-item"><a href="#viewReqParam">Request Parameters</a></div>
+                        <div class="list-group-item"><a href="#passData">Passing Custom Data to Pages</a></div>
+                        <div class="list-group-item"><a href="#mvcErrHandling">Error Handling</a></div>
+                        <div class="list-group-item"><a href="#mvEx">Building an MVC Web App</a></div>
+                        <a href="#security" class="list-group-item active">Security</a>
+                        <div class="list-group-item"><a href="#https">HTTPS Setup</a></div>
+                        <div class="list-group-item"><a href="#auth">HTTP Authentication</a></div>
+                        <a href="#php" class="list-group-item active">PHP Integration</a>
+                        <div class="list-group-item"><a href="#phpSetup">Setup</a></div>
+                        <div class="list-group-item"><a href="#phpReqParam">Request Parameters</a></div>
+                        <div class="list-group-item"><a href="#phpManual">Loading PHP Files Manually</a></div>
+                        <div class="list-group-item"><a href="#phpErrHandling">Error Handling</a></div>
+                        <a href="#db" class="list-group-item active">Connecting to Databases</a>
+                        <div class="list-group-item"><a href="#libs">Available Libraries</a></div>
+                        <div class="list-group-item"><a href="#dbi">DbiDatabaseInterface</a></div>
+                        <a href="#admin" class="list-group-item active">Server Admin App</a>
+                        <div class="list-group-item"><a href="#siteList">Site Listings</a></div>
+                        <div class="list-group-item"><a href="#logs">Logs</a></div>
+                        <div class="list-group-item"><a href="#perf">Performance</a></div><!--
+                        <div class="list-group-item"><a href="#sessions">Sessions</a></div>
+                        <div class="list-group-item"><a href="#qTests">Quick Tests</a></div>
+                        <a href="#debugging" class="list-group-item active">Debugging</a>
+                        <div class="list-group-item"><a href="#sLogs">Server Logs</a></div>
+                        <div class="list-group-item"><a href="#lDebuggers">Lua Debuggers</a></div>-->
+                    </div>
+
+
+
+<!--                    <div class="row clearfix">
+                        <div class="col-md-3 column">
+                        </div>
+                        <div class="col-md-6 column">
+<pre>
+<code class="lua">
+    local model =
+    {
+        age = 12,
+        name = "matthew"
+    }
+</code></pre>
+                        </div>
+                        <div class="col-md-3 column">
+                        </div>
+                    </div>-->
+                    <h3><a id="serverSetup"></a>Server Setup</h3>
+
+                    <h4><a id="ubuntu"></a>Installing on Ubuntu (or similar)</h4>
+
+                    <p>To install the server on Ubuntu install the following libraries on the system:</p>
+					<ul>
+						<li>gcc</li>
+						<li>gcc++</li>
+						<li>lua</li>
+						<li>lua-dev</li>
+						<li>apr</li>
+						<li>apr-util</li>
+						<li>apreq2</li>
+						<li>luarex-pcre</li>
+						<li>luadbi-mysql</li>
+						<li>luaapr</li>
+						<li>luasec</li>
+						<li>libffi</li>
+						<li>luarocks</li>
+					</ul>
+
+	                <p>Then use the luarocks package manager to install the following packages:</p>
+	                <ul>
+						<li>lualogging</li>
+		                <li>lzlib</li>
+	                </ul>
+
+	                <p>Additionally download the Lua libraries <a href="https://code.google.com/p/lualinq/">lualinq</a> and <a href="http://regex.info/blog/lua/json">JSON</a>, install these in your Lua path.</p>
+
+	                <b>Ensure that the a folder named 'PuRest' (case sensitive) is located in your Lua path and contains the modules for the web server.</b>
+	                <hr>
+
+                    <h4><a id="win32"></a>Installing on Other Systems</h4>
+
+                    <p>Ensure the equivalent libraries and dependencies, from the above requirements, are installed on your system. You should then be good to go with a few minor tweaks.</p>
+                    <hr>
+
+                    <h4><a id="configuration"></a>Configuration</h4>
+                    <p>
+                       The server uses a Lua table for configuration,
+                       with a set of default values if a custom config file has not
+                       been defined; see how to define a custom config file in the <a href="#envVars">Environment Variables</a> section below.
+                       Any custom configuration table used is validated before use for the right keys and types.
+                    </p>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Config Key
+                                </th>
+                                <th>
+                                    Type
+                                </th>
+                                <th>
+                                    Default Value
+                                </th>
+                                <th>
+                                    Description
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>
+                                host
+                            </td>
+                            <td>
+                                string
+                            </td>
+                            <td>
+                                *
+                            </td>
+                            <td>
+                                Bind the HTTP/HTTPS server to this host.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                port
+                            </td>
+                            <td>
+                                int
+                            </td>
+                            <td>
+                                8888
+                            </td>
+                            <td>
+                                Bind the HTTP server to this port.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                workerThreads
+                            </td>
+                            <td>
+                                int
+                            </td>
+                            <td>
+                                50
+                            </td>
+                            <td>
+                                Maximum number of threads to spawn to handle client requests. (higher = more clients but higher load)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                connectionBacklog
+                            </td>
+                            <td>
+                                int
+                            </td>
+                            <td>
+                                50
+                            </td>
+                            <td>
+                                Maximum number clients in server connection queue. This should be around the same as workerThreads or higher if you want a client to wait until a worker thread is available.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                connectionTimeOutInMs
+                            </td>
+                            <td>
+                                int
+                            </td>
+                            <td>
+                                15
+                            </td>
+                            <td>
+                                Number of milliseconds to wait for a new client to connect.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                httpKeepAliveTimeOutInSecs
+                            </td>
+                            <td>
+                                int
+                            </td>
+                            <td>
+                                60
+                            </td>
+                            <td>
+                                If a client uses HTTP Keep-Alive, then time to wait for the next HTTP request before closing the socket.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                socketSendBufferSize
+                            </td>
+                            <td>
+                                int
+                            </td>
+                            <td>
+                                16384
+                            </td>
+                            <td>
+                                Size in bytes for client socket send buffer.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                socketReceiveBufferSize
+                            </td>
+                            <td>
+                                int
+                            </td>
+                            <td>
+                                8192
+                            </td>
+                            <td>
+                                Size in bytes for server socket receive buffer.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                https
+                            </td>
+                            <td>
+                                table
+                            </td>
+                            <td>
+                                (see entries below)
+                            </td>
+                            <td>
+                                Configuration table for HTTPS communication.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="indent">enabled</span>
+                            </td>
+                            <td>
+                                bool
+                            </td>
+                            <td>
+                                true
+                            </td>
+                            <td>
+                                If false a HTTPS server is not started and only requests
+                                to the HTTP port are responded to. Otherwise a HTTPS server will listen
+                                on the HTTPS port.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="indent">port</span>
+                            </td>
+                            <td>
+                                int
+                            </td>
+                            <td>
+                                4430
+                            </td>
+                            <td>
+                                Bind the HTTPS server to this port.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="indent">encryption</span>
+                            </td>
+                            <td>
+                                string
+                            </td>
+                            <td>
+                                tlsv1_1
+                            </td>
+                            <td>
+                                Encryption to use for HTTPS communications, options available here depend
+                                on your version of LuaSec and OpenSSL, but you should be able to use either 'sslv23'
+                                for SSL or 'tlsv1_1' for TLS (The highest version of . <br/><br/>Note that even if selected SSL is disabled by default
+                                as it has been proven to be insecure, use enableSSL field below to control this behaviour,
+                                if you don't the HTTPS server will throw an error when to new client's try to connect.
+                                (See <a href="https://github.com/brunoos/luasec/wiki">LuaSec 0.5 documentation</a>)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="indent">encryption</span>
+                            </td>
+                            <td>
+                                bool
+                            </td>
+                            <td>
+                                false
+                            </td>
+                            <td>
+                                If true, throw and error if SSL is selected as the encryption for HTTPS communications. Otherwise permit SSL encryption.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="indent">key</span>
+                            </td>
+                            <td>
+                                string
+                            </td>
+                            <td>
+                                $PUREST_WEB/key.pem OR $PUREST/key.pem
+                            </td>
+                            <td>
+                                Path to the key file to use for HTTPS communications in PEM format.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="indent">certificate</span>
+                            </td>
+                            <td>
+                                string
+                            </td>
+                            <td>
+                                $PUREST_WEB/cert.pem OR $PUREST/cert.pem
+                            </td>
+                            <td>
+                                Path to the certificate file to use for HTTPS communications in PEM format.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                enableSiteCache
+                            </td>
+                            <td>
+                                bool
+                            </td>
+                            <td>
+                                true
+                            </td>
+                            <td>
+                                If true a site will be added to the cache first time it is requested until it expires.
+                                This means the server will not look for the site in the file system while it is in the cache.
+                                <br/>
+                                Otherwise the server will scan the file system for the site every time a request is processed.
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                siteCacheExpiryInSecs
+                            </td>
+                            <td>
+                                float
+                            </td>
+                            <td>
+                                15
+                            </td>
+                            <td>
+                                The time between a site being added to the cache and it expiring. Once expired the
+                                it will be automatically removed from the cache.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                enableFileCache
+                            </td>
+                            <td>
+                                bool
+                            </td>
+                            <td>
+                                true
+                            </td>
+                            <td>
+                                If true, when a file is requested it is added to the cache. The cache for a file
+                                reflects the file system and any file requested from the cache is first checked if was edited
+                                or deleted, if so it is removed from the cache.
+                                <br/>
+                                Otherwise a file is read in from the file system every time it is requested.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                fileCacheMinFileSizeInMb
+                            </td>
+                            <td>
+                                float
+                            </td>
+                            <td>
+                                1.25
+                            </td>
+                            <td>
+                                This is the minimum size (MB) a file needs to be to add it to the cache. Use this
+                                to stop files that would be too small to speed up future requests if they were cached.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                fileCacheMaxFileSizeInMb
+                            </td>
+                            <td>
+                                float
+                            </td>
+                            <td>
+                                150
+                            </td>
+                            <td>
+                                This is the maximum size (MB) a file can be to add it to the cache. Use this
+                                to stop files that would take up too much memory if they were cached.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                systemTemplate
+                            </td>
+                            <td>
+                                string
+                            </td>
+                            <td>
+                                [See module 'PuRest.Html.SystemTemplate']
+                            </td>
+                            <td>
+                                A html document in a string that is used as the system template to present
+                                responses that generate some sort of error, 404/403/500/401 etc. This should
+                                have two format specifiers '%s' somewhere in the text to act as placeholders
+                                for the page title and error message html output.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                systemTemplate
+                            </td>
+                            <td>
+                                string
+                            </td>
+                            <td>
+                                [See module 'PuRest.Html.SystemTemplate']
+                            </td>
+                            <td>
+                                A html document in a string that is used as the system template to present
+                                responses that generate some sort of error, 404/403/500/401 etc. This should
+                                have two format specifiers '%s' somewhere in the text to act as placeholders
+                                for the page title and error message html output.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                htmlDirectory
+                            </td>
+                            <td>
+                                string
+                            </td>
+                            <td>
+                                $PUREST_WEB OR $PUREST
+                            </td>
+                            <td>
+                                Absolute path the the HTML directory that contains each site as a sub directory.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                htmlDirectory
+                            </td>
+                            <td>
+                                string
+                            </td>
+                            <td>
+                                $PUREST_WEB OR $PUREST
+                            </td>
+                            <td>
+                                Absolute path the the HTML directory that contains each site as a sub directory.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                siteNamesCaseSensitive
+                            </td>
+                            <td>
+                                boolean
+                            </td>
+                            <td>
+                                false
+                            </td>
+                            <td>
+                                When searching the file system in the html directory, ensure site name to sub-directory name
+                                match is case sensitive.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                launchScriptNames
+                            </td>
+                            <td>
+                                table
+                            </td>
+                            <td>
+                                {"index.lua", "launch.lua", "init.lua"}
+                            </td>
+                            <td>
+                                List of filenames as strings that will be recognised as a valid launch script
+                                for a site; this must reside in the sub-directory for the site, so for a site
+                                named 'scores' you could make a file '{html directory}/scores/index.lua'.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                supportHttpCompression
+                            </td>
+                            <td>
+                                boolean
+                            </td>
+                            <td>
+                                true
+                            </td>
+                            <td>
+                                Use GZIP compression to encode the HTTP response body where possible.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                httpCompressionLevel
+                            </td>
+                            <td>
+                                number
+                            </td>
+                            <td>
+                                3
+                            </td>
+                            <td>
+                                The level of compression to use when using GZIP, higher number gives better compression
+                                but will take longer (especially for larger files).
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                httpCompressionMinContentSizeInBytes
+                            </td>
+                            <td>
+                                number
+                            </td>
+                            <td>
+                                1024
+                            </td>
+                            <td>
+                                The size in bytes a response body needs to be to qualify for GZIP compression;
+                                this eliminates responses that would be larger when compressed or compression
+                                would not save enough bandwidth benefit for the CPU time needed to compress.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                phpBinPath
+                            </td>
+                            <td>
+                                string
+                            </td>
+                            <td>
+                                $PUREST_PHP or 'php'
+                            </td>
+                            <td>
+                                Path to a PHP interpreter to use to process any PHP scripts requested
+                                by clients. On UNIX you can use the bin name 'php' instead of a full
+                                path to the executable. Interaction with this interpreter is done through
+                                standard output/error and by passing the full path of the requested PHP file.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                siteDefaults
+                            </td>
+                            <td>
+                                table
+                            </td>
+                            <td>
+                                [Table returned by the module PuRest.Config.DefaultSiteConfig]
+                            </td>
+                            <td>
+                                The default config to use when handling requests, this is only used if no
+                                launch script is found or a config table was not returned by the launch script.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                logging
+                            </td>
+                            <td>
+                                table
+                            </td>
+                            <td>
+                                (see entries below)
+                            </td>
+                            <td>
+                                Configuration table for server logging.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="indent">logPath</span>
+                            </td>
+                            <td>
+                                string
+                            </td>
+                            <td>
+                                $PUREST_WEB or $PUREST
+                            </td>
+                            <td>
+                                Path to the directory to output server log files, make sure the user the
+                                server is running under has permissions to manage files in this directory.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="indent">maxLogFileSize</span>
+                            </td>
+                            <td>
+                                number
+                            </td>
+                            <td>
+                                1024
+                            </td>
+                            <td>
+                                If a log file is over this size (in KB) the server will delete the file and create
+                                a new one.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="indent">clearDownIntervalInSecs</span>
+                            </td>
+                            <td>
+                                number
+                            </td>
+                            <td>
+                                60
+                            </td>
+                            <td>
+                                The interval between checking log files to see if they are over the maximum size and
+                                delete them if they are.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="indent">maxLogLevel</span>
+                            </td>
+                            <td>
+                                string
+                            </td>
+                            <td>
+                                DEBUG
+                            </td>
+                            <td>
+                                The maximum log file to output to a log file, supported levels (highest to lowest)
+                                are: DEBUG, INFO, WARN, ERROR, FATAL, NONE
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <hr>
+
+                    <h4><a id="envVars"></a>Environment Variables</h4>
+
+                    <p>Below is a list of environment variables that should be defined for PuRest server to work correctly.</p>
+                    <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>
+                            Variable Name
+                        </th>
+                        <th>
+                            Description
+                        </th>
+                        <th>
+                            Functionality
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>PUREST</td>
+                            <td>Path to the PuRest server installation.</td>
+                            <td>Core</td>
+                        </tr>
+                        <tr>
+                            <td>PUREST_WEB</td>
+                            <td>Path to the directory to use as the web root (should contain sites as directory per site).</td>
+                            <td>Core</td>
+                        </tr>
+                        <tr>
+                            <td>PUREST_CFG</td>
+                            <td>Path to a Lua file that will return a custom server config table, this will be verified for correct keys/types once called.</td>
+                            <td>Configuration (Optional)</td>
+                        </tr>
+                        <tr>
+                            <td>PUREST_PHP</td>
+                            <td>Path to a PHP binary to use when processing requested PHP scripts.</td>
+                            <td>PHP Support (Optional)</td>
+                        </tr>
+                    </tbody></table>
+                    <hr>
+
+                    <h4><a id="luaPaths"></a>Recommended Lua Paths</h4>
+
+                    <p>In addition to your libraries and PuRest server files being in the LUA_PATH/LUA_CPATH, make sure that
+                       the web directory used is also in the LUA_PATH/LUA_CPATH so any custom scripts you write there can be
+                       imported in your launch script. So if you hav a site named employees you could import a module by
+                       calling require on a module name like "employees.database". </p>
+                    <p>
+                       It is also recommended that you build your LUA_PATH with the following patterns:
+                    </p>
+                    <ul>
+                        <li>$LUA_LIBS/?/?.lua</li>
+                        <li>$LUA_LIBS/?/init.lua</li>
+                        <li>$LUA_LIBS/?.lua</li>
+                        <li>$LUA_LIBS/init.lua</li>
+                        <li>$LUA_LIBS/?/src/?.lua</li>
+                        <li>$LUA_LIBS/init.lua</li>
+                        <li>$LUA_LIBS/?/src/?/?.lua</li>
+                        <li>$LUA_LIBS/?/src/init.lua</li>
+                    </ul>
+                    <i>Replace the $LUA_LIBS with a directory you know contains Lua source, and repeat this pattern for each
+                    directory you include in the LUA_PATH.</i>
+                    <p>Again, here is a list of recommended LUA_CPATH patterns: </p>
+                    <ul>
+                        <li>$LUA_CLIBS/?/core.so</li>
+                        <li>$LUA_CLIBS/?/?.so</li>
+                        <li>$LUA_CLIBS/?.so</li>
+                    </ul>
+                    <i>Replace the $LUA_CLIBS with a directory you know contains Lua C libraries, and repeat this pattern for each
+                        directory you include in the LUA_CPATH.</i>
+                    <p>See the Lua wiki page <a href="http://www.lua.org/pil/8.1.html">here</a> for more information.</p>
+                    <hr>
+
+                    <h4><a id="startServer"></a>Starting the Server</h4>
+
+                    <p>Once all Lua paths are set up for the server and it's dependencies you can start the server by running the
+                       following command (you may get a firewall warning on first run):</p>
+                    <div class="row clearfix">
+                        <div class="col-md-3 column">
+                        </div>
+                        <div class="col-md-6 column">
+<pre>
+<code class="bash">lua -e "require 'PuRest.load'</code></pre>
+                        </div>
+                        <div class="col-md-3 column">
+                        </div>
+                    </div>
+                    <i>On linux start this command as the root user, but make sure that you use sudo -i to elevate the terminal as
+                       sudo to root can clean current environment variables.</i>
+                    <hr>
+
+                    <h3><a id="sites"></a>Managing Sites</h3>
+
+                    <h4><a id="createSite"></a>Creating a Site</h4>
+
+                    <p>To create a new site on the server, navigate to the HTML root directory, pointed to by the $PUREST_WEB environment
+                       variable and add a new sub directory which has the name you wish to call in your URL. So if you created a new directory
+                       named 'employees' you could then make requests to that site by calling 'http://localhost:8888/<b>employees/</b>'.
+                    </p>
+                    <hr>
+
+                    <h4><a id="siteConf"></a>Configuration</h4>
+
+                    <p>As with the server configuration, the site configuration is a Lua table, below are the keys and their default values:</p>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>
+                                Config Key
+                            </th>
+                            <th>
+                                Type
+                            </th>
+                            <th>
+                                Default Value
+                            </th>
+                            <th>
+                                Description
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>name</td>
+                            <td>string</td>
+                            <td>[empty string]</td>
+                            <td>Human readable name for the site (used as an ID in several places so keep this constant while the server is still running),
+                                if blank the site directory name is used instead.</td>
+                        </tr>
+                        <tr>
+                            <td>fullPath</td>
+                            <td>string</td>
+                            <td>/</td>
+                            <td>Full path to the site file, use this to create a virtual directory site which reads from another folder.
+                                NOTE: you can set this to nil and the server will automatically use the site directory, there is no need to maintain it yourself
+                                if you provide config for a site.</td>
+                        </tr>
+                        <tr>
+                            <td>hostWhitelist</td>
+                            <td>table</td>
+                            <td>{{"*", false}}</td>
+                            <td>A dictionary of allowed hostnames for requests to use to access this site.
+                                The format is a table per allowed host name, which contains two values: {hostName, doDnsLookup}. The DNS lookup option is boolean and
+                                if this is present and set to true the sever will do a DNS lookup of the hostName value and compare it to the host in the HTTP request, otherwise
+                                the server will just do a string comparison between the HTTP request host and hostName.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>fileServingEnabled</td>
+                            <td>boolean</td>
+                            <td>true</td>
+                            <td>If true, when a client requests a valid file, send back it's contents in the response. Otherwise the server will
+                                not look for the file and return a 404. If you create your own RouteMap for your site you will to specify this preference when building the map. See the
+                                <a href="#routeMaps">Building RouteMaps</a> section for more info.</td>
+                        </tr>
+                        <tr>
+                            <td>directoryServingEnabled</td>
+                            <td>boolean</td>
+                            <td>true</td>
+                            <td>If true, when a client requests ends in a trailing slash/site sub-directory name, list it's contents as a HTML page (allowing downloading files/navigation).
+                                Otherwise the server will not list the directory and return a 404. If you create your own RouteMap for your site you will to specify this preference when building the map. See the
+                                <a href="#routeMaps">Building RouteMaps</a> section for more info.</td>
+                        </tr>
+
+                        <tr>
+                            <td>doNotServeTheseFiles</td>
+                            <td>table</td>
+                            <td>{"*.lua"}</td>
+                            <td>
+                                Specifies file name patterns to not serve when they are requested, this allows you to hide
+                                files from client requests and protect sensitive server side data. The format is a entry in the
+                                table for each file pattern not to serve, a pattern can contain zero or more wildcards (*). This
+                                will be respected when serving files and when listing directory contents.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>sessions</td>
+                            <td>table</td>
+                            <td>(see entries below)</td>
+                            <td>Configuration table for user session handling. See the
+                                <a href="#userSessions">User Sessions</a> section for more information.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="indent">timeoutInMins</span></td>
+                            <td>number</td>
+                            <td>60</td>
+                            <td>The amount of time in minutes after the session was last retreived/updated to expire and delete a session.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="indent">peerNameSessionsEnabled</span></td>
+                            <td>boolean</td>
+                            <td>true</td>
+                            <td>If true, user sessions will be stored using the peer name and port as the index.
+                                Otherwise only if userAgentSessionsEnabled and the request provides a user agent
+                                string will the sessions be saved.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="indent">userAgentSessionsEnabled</span></td>
+                            <td>boolean</td>
+                            <td>true</td>
+                            <td>If true, when a HTTP request specifies a user agent the user agent session is stored using the peer name and user agent as the index.
+                                Otherwise, only if peerNameSessionsEnabled is turned on will user sessions be saved.</td>
+                        </tr>
+                        <tr>
+                            <td>routes</td>
+                            <td>table</td>
+                            <td>(see entries below)</td>
+                            <td>Configuration table for route handling. See the
+                                <a href="#respond">Responding to Requests</a> section for more information.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="indent">useReturnValueAsContent</span></td>
+                            <td>boolean</td>
+                            <td>true</td>
+                            <td>If true, when a value is returned from a route handler, it is used as content for the HTTP response. This will only be
+                                done if there is no existing response content or the 'appendReturnValueToContent' config value is true. Otherwise the return value is not used.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="indent">serializeHandlerReturnValue</span></td>
+                            <td>boolean</td>
+                            <td>true</td>
+                            <td>If true, when a value is returned from a route handler, it is serialized before being used as content for the HTTP response. Otherwise the return value is just used as a string.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="indent">appendReturnValueToContent</span></td>
+                            <td>boolean</td>
+                            <td>true</td>
+                            <td>If true, when a value is returned from a route handler, it is it will be appended as content for the HTTP response. If this is false and
+                                the config value useReturnValueAsContent is true, the server will not add return value to response if some response content already exists. </td>
+                        </tr>
+                        <tr>
+                            <td>authentication</td>
+                            <td>table</td>
+                            <td>(see entries below)</td>
+                            <td>Configuration table for HTTP authentication. See the
+                                <a href="#auth">HTTP Authentication</a> section for more information.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="indent">enableAuthentication</span></td>
+                            <td>boolean</td>
+                            <td>false</td>
+                            <td>If true, HTTP authentication data will be extracted from requests and used to verify users. </td>
+                        </tr>
+                        <tr>
+                            <td><span class="indent">requireAuthenticationEverywhere</span></td>
+                            <td>boolean</td>
+                            <td>false</td>
+                            <td>If true, HTTP authentication will be applied to all routes/files/directories on site.
+                                Otherwise the authenticationRouteMap will be used to detect routes that require authentication. </td>
+                        </tr>
+                        <tr>
+                            <td><span class="indent">securityProvider</span></td>
+                            <td>SecurityProvider</td>
+                            <td>{}</td>
+                            <td>An instance of the "PuRest.Security.SecurityProvider" class which will handle authentication requests.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="indent">authenticationRouteMap</span></td>
+                            <td>RouteMap</td>
+                            <td>{}</td>
+                            <td>An instance of the "PuRest.Routing.RouteMap" that defines routes to be protected by HTTP authentication.
+                                See the <a href="#routeMaps">Building RouteMaps</a> section for more info.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>logging</td>
+                            <td>table</td>
+                            <td>(see entries below)</td>
+                            <td>Configuration table for site specific logging settings.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="indent">siteLoggingEnabled</span></td>
+                            <td>boolean</td>
+                            <td>true</td>
+                            <td>If true site specific request messages will be logged, otherwise only server messages about request handling will be logged.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="indent">logLevel</span></td>
+                            <td>string</td>
+                            <td>nil</td>
+                            <td>The maximum logging level to log for messages coming from site request messages; nil value means use server config value. See the logging.maxLogLevel value in server config for more information.
+                            </td>
+                        </tr>
+                        </tbody></table>
+
+                    <hr>
+
+                    <h4><a id="launchScripts"></a>Launch Scripts</h4>
+
+                    <p>Launch scripts allow you to add logic for handling routes and control the configuration of your site. These are Lua files located in
+                       the top directory of your site, and the acceptable file names for a launch script are controlled by the server config key launchScriptNames. See
+                        the <a href="#configuration">Server Config</a> section to view the default names. Below is an example of a launch script that returns configuration
+                        for a site.
+                    </p>
+
+                    <div class="row clearfix">
+                        <div class="col-md-2 column">
+                        </div>
+                        <div class="col-md-8 column">
+<pre>
+<code class="lua">local generateSiteConfig = require "PuRest.Config.generateSiteConfig"
+
+                   -- The one parameter here is whether to let the server
+                   -- automatically detect the site path or not. Only if you
+                   -- are setting up a virtual directory should this be false.
+local siteConfig = generateSiteConfig(true)
+siteConfig.name = "My Wonderful Site"
+
+-- Return table to server to load config.
+return
+{
+    siteConfig = siteConfig
+}
+</code></pre>
+                        </div>
+                        <div class="col-md-2 column">
+                        </div>
+                    </div>
+
+                    <p>As shown, use the generateSiteConfig function returned by the "PuRest.Config.generateSiteConfig" module to build a new
+                       site config table from defaults. You can then edit any keys to customise the config. Launch scripts can optionally return
+                       a table with the format {siteConfig = [Config table], routeMap = [RouteMap instance]} (See the <a
+                                href="#routeHandling">Route Handling</a> section for more info on Route Maps.</p>
+
+                    <p>Often you need to load in extra libraries/lua scripts for a web app, you can use the regular require to do this.
+                       However the standard require function caches any modules it loads, which may not be what you want if you changing the code during
+                       development a web app or need a script to run every time a require statement appears. The server provides the
+                       global 'forceRequire' to handle this. With forceRequire you can load a module every time forceRequire is called to load it.
+                       A brief example of usage is below.</p>
+
+                    <div class="row clearfix">
+                        <div class="col-md-2 column">
+                        </div>
+                        <div class="col-md-8 column">
+<pre>
+<code class="lua">local extraModule = forceRequire "wonderful.extraModule"
+
+    -- extraModule will now always be the latest version
+    -- of the "wonderful.extraModule" module present in the LUA_PATH
+    local val = extraModule.val
+</code></pre>
+                        </div>
+                        <div class="col-md-2 column">
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <h4><a id="fileDirServe"></a>File/Directory Serving</h4>
+
+                    <p>When file serving is enabled in the configuration of a site, and in the route map returned from a launch script (if present), then you
+                       can request files from within a site. Only files whose patterns do not appear in the site config's doNotServeTheseFiles table will be served when requested. A
+                       file will have it's MIME type detected from it's file extension and the appropriate MIME type will be set as the content type in the HTTP response headers.</p>
+                    <p>
+                        Directory serving provides the facility to list directory contents within sites, allowing a user to browse the contents as a HTML file, navigating between directories and
+                        downloading files. Again the site config or the route map returned from the launch script decide whether this is enabled or not. To view a directory make a request which ends in
+                        a directory name or a trailing slash. Files that would not be served if requested are not displayed and hidden files and directories (beginning with a '.' character) are also hidden.
+                    </p>
+                    <hr>
+
+                    <h4><a id="userSessions"></a>User Sessions</h4>
+
+                    <p>User sessions are maintained for a client and persisted between requests. The config key sessions in the configuration for a site controls the behaviour
+                       of server side sessions. When a session is created, loaded or saved it will have a expiry timeout associated with it, which when passed will delete the session from memory. Use the
+                       sessions.timeoutInMins config key to configure this for your site. When a session is stored in memory an index is created so that the client session can be identified during the next request.
+                       The index is created either using the peer name(host name) and port of the client or the peer name and user agent of the client (if a user agent string is present in HTTP request headers from the client).
+                       You can prefer a method of session indexing by toggling the sessions.peerNameSessionsEnabled or sessions.userAgentSessionsEnabled keys. </p>
+                    <p>
+                        The session data stored can be any Lua value, as sessions are stored in memory and not serialized. By default the session data is set to an empty table, and you use this like the traditional
+                        session array in languages like PHP or C#, storing values using associative array notation -> e.g. session["name"] = "david". See the
+                        <a href="#">HttpState Class</a> section for details on working with session data.
+                    </p>
+                    <hr>
+
+                    <h4><a id="reqFilter"></a>Request Filtering</h4>
+
+                    <p>If you require that requests from clients meet certain criteria you can control this using the site config. The key hostWhitelist will
+                       allow you to set permitted request hosts, this is determined by the host header of a HTTP request. HTTP authentication is another way
+                       to filter client requests, see the <a href="#auth">HTTP Authentication</a> section for more information.</p>
+                    <hr>
+
+                    <h3><a id="routeHandling"></a>Route Handling</h3>
+                        <p>All routes can be defined in the launch script for a site, to register these with the server
+                           you need to add a RouteMap instance to the 'routeMap' key of the script return table; therefore
+                           all routes should be merged into one route map.</p>
+                    <hr/>
+                    <h4><a id="routeMaps"></a>Building Route Maps</h4>
+                        <p>Import the module and create a new route map:</p>
+                    <div class="row clearfix">
+                        <div class="col-md-2 column">
+                        </div>
+                        <div class="col-md-8 column">
+<pre>
+<code class="lua">local RouteMap = require "PuRest.Routing.RouteMap"
+
+-- Takes two parameters (enableFileServing, enableDirectoryServing)
+local routeMap = RouteMap(true, true)
+</code></pre>
+                        </div>
+                        <div class="col-md-2 column">
+                        </div>
+                    </div>
+                    <p>Enabling file serving allows the site to respond to requests for
+                       files and enabling directory serving allows the contents of directories
+                       on the site to be listed as HTML pages.
+                    </p>
+                    <hr>
+
+                    <h4><a id="defineRoute"></a>Define a Route</h4>
+                    <p>Create a new route and add it to the route map:</p>
+                    <div class="row clearfix">
+                        <div class="col-md-2 column">
+                        </div>
+                        <div class="col-md-8 column">
+<pre>
+<code class="lua">local Route = require "PuRest.Routing.Route"
+
+-- Takes four parameters (routeName, httpMethod, urlRoute, handler)
+local route = Route("name", "GET", "/route", function ()
+    -- Will be called on 'HTTP GET /site/route' request
+end)
+
+routeMap.addRoute(route)
+</code></pre>
+                        </div>
+                        <div class="col-md-2 column">
+                        </div>
+                    </div>
+                    <p>When you define a route you must give a human readable name, the HTTP request method (this can be a string or a
+                        table of strings containing acceptable request methods) and the
+                       request path that matches that route, this is relative to the site so '/' is the root of the
+                       site; this is a virtual path and can be any valid URL string.
+                    </p>
+                    <hr>
+
+                    <h4><a id="reqParams"></a>Request Parameters</h4>
+
+                    <p>When you define a handler for a route you can read various request parameters and data:</p>
+                    <div class="row clearfix">
+                        <div class="col-md-1 column">
+                        </div>
+                        <div class="col-md-10 column">
+<pre>
+<code class="lua">local route = Route("name", "GET", "/route/{id}", function (urlArgs, queryStringArgs, httpState, siteConfig)
+    -- urlArgs -> Access any URL arguments
+    local id = urlArgs.id
+
+    -- queryStringArgs -> Key value pairs from a query string
+    local name = queryStringArgs.name
+
+    -- httpState -> Current state of the HTTP request
+
+    -- siteConfig -> Current configuration for the site handling the route
+end)
+</code></pre>
+                        </div>
+                        <div class="col-md-1 column">
+                        </div>
+                    </div>
+                    <p>Data is passed to the handler when called, this allows you to access data and configuration regarding the
+                        HTTP request that triggered the route call. The urlArgs parameter is a table with a key for each url parameter
+                        in the route request path. You can define a URL parameter by adding it like this: '/people/{id}', the part of the
+                        request URL where {id} is located will define the parameter value and id will be used as the key; so if the route
+                        was called with '/people/30' the key 'urlArgs.id' would have the value 30.
+                        </p><p>
+                        The queryStringArgs parameter is again a table, filled with the key value pairs present in the request query string. If
+                        no query string is present in the request this parameter will be set to nil.
+                        </p><p>
+                        See the <a href="#httpState">HttpState Class</a> section below for more information on the httpState parameter.
+                        </p><p>
+                        See the <a href="#siteConf">Site Configuration</a> section for more information on the siteConfig parameter.
+                    </p>
+                    <hr>
+
+                    <h4><a id="httpState"></a>HttpState Class</h4>
+
+                    <p>The HttpState class contains information about the current HTTP request and server response, it provides
+                        a convenient way to see HTTP headers and the request body:</p>
+                    <div class="row clearfix">
+                        <div class="col-md-1 column">
+                        </div>
+                        <div class="col-md-10 column">
+<pre>
+<code class="lua">local route = Route("name", "GET", "/route/{id}", function (urlArgs, queryStringArgs, httpState, siteConfig)
+    -- Get request body (POST/PUT data)
+    local post = httpState.request.body
+
+    -- Get a specific HTTP header
+    local host = httpState.request.headers.host
+
+    -- Get HTTP method used to call route
+    local method = httpState.request.method
+
+    -- Set the content type of the response
+    httpState.response.responseFormat = "application/json"
+end)
+</code></pre>
+                        </div>
+                        <div class="col-md-1 column">
+                        </div>
+                    </div>
+                    <p> The HTTP state allows you in inspect request data and headers, and write to the collection of request
+                        headers and set the body and content type of the response. HTTP headers in both instances are setup as
+                        tables with each key being a header name. If you specify more than one HTTP method for your route you
+                        can use the request.method field to determine the method used; this is in the format of an uppercase string.
+                        </p><p>
+                        The request.body field hold the body of a HTTP request. If the content type of the request is one of
+                        the below types it will be deserialized into a Lua value. If the content is deserialized the resulting value
+                        is assigned to the request.body field.
+                    </p>
+                    <ul>
+                        <li>application/json</li>
+                        <li>application/xml</li>
+                        <li>application/x-www-form-urlencoded</li>
+                        <li>multipart/form-data</li>
+                        <li>text/xml</li>
+                    </ul>
+                    <hr>
+
+                    <h4><a id="respond"></a>Responding to Requests</h4>
+                    <p>Once you have processed a request in your route handler you can set value(s) to act as response content:</p>
+                    <div class="row clearfix">
+                        <div class="col-md-1 column">
+                        </div>
+                        <div class="col-md-10 column">
+<pre>
+<code class="lua">local route = Route("name", "GET", "/route/{id}", function (urlArgs, queryStringArgs, httpState, siteConfig)
+    -- Set the content type of the response
+    httpState.response.responseFormat = "application/json"
+
+    -- Changing the HTTP response status code
+    httpState.response.status = 201
+
+    -- There are two ways to set the response body
+    httpState.response.body = [[{"key": "value"}]] -- Manually set serialized data
+
+    return -- Return a lua value to be serialized
+    {
+    key = "value"
+    }
+end)
+</code></pre>
+                        </div>
+                        <div class="col-md-1 column">
+                        </div>
+                    </div>
+                    <p> Using the HttpState object you can set the content type being returned in the response. To set the response body, one can either
+                        set the httpState.response.body field or return a value from the route handler. The server, depending on site
+                        configuration, will attempt to serialize the return value based on the response format set. The following types
+                        can be serialized from a Lua value (tostring() will be called on the value if non serializable type detected).
+                    </p>
+                    <ul>
+                        <li>application/json</li>
+                        <li>application/xml</li>
+                        <li>text/xml</li>
+                    </ul>
+                    <p>To change the HTTP response status code assign a numeric value to httpState.response.status.</p>
+                    <hr>
+
+                    <h4><a id="errHandling"></a>Error Handling</h4>
+                    <p>The server API provides tools for handling errors during request processing:</p>
+                    <div class="row clearfix">
+                        <div class="col-md-1 column">
+                        </div>
+                        <div class="col-md-10 column">
+<pre>
+<code class="lua">local restAction = require "PuRest.Rest.restAction"
+local try = require "PuRest.Util.ErrorHandling.try"
+
+local route = Route("name", "GET", "/route/{id}", function (urlArgs, queryStringArgs, httpState, siteConfig)
+    try(function ()
+        danger()
+    end)
+    .catch(function (ex) -- Calling catch and finally are optional
+        -- handle error
+    end)
+    .finally(function ()
+        -- Clean up resources
+    end)
+
+    [[ Rest action returns a result table like so:
+        {
+          status = "SUCCESS" | "ERROR",
+          data = [Lua table or primitive],
+          error = [Error details if error occurred]
+        }
+    ]]
+    return restAction( function (result)
+        result.data = danger()
+    end), httpState, function (result) -- Only the action function and the httpState are mandatory
+        -- Clean up resources
+    end), "application/json", function (result)
+        -- handle error
+    end)
+end)
+</code></pre>
+                        </div>
+                        <div class="col-md-1 column">
+                        </div>
+                    </div>
+                    <p> The try function in the above example is a wrapper to produce a try catch finally block, similar
+                        to ones found in Java, C# or C++. The exception in the catch block will almost always be a string with
+                        a stack trace appended to it.
+                        </p>
+                    <p> The restAction function allows you to conduct an action and report any
+                        errors to the client directly. A table is passed between the action, finally and error blocks specified in
+                        the parameters, you can specify any additional keys you wish, but it is recommended to store any return value
+                        for the client in the 'data' field of this table. If an error is thrown in the action block it is denoted by changing the status field
+                        to "ERROR" and setting the error details in the 'error' field of the table.
+                    </p>
+                    <p>You can return the result of restAction directly to
+                        serialize this table; by default restAction sets the response content type to JSON but you can change this by either setting it
+                        in the HttpState after calling restAction or by passing in the desired MIME type as the fourth parameter to restAction.
+                    </p>
+                    <p>
+                        The only mandatory parameters for restAction are the action function and a valid HttpState object. Remember to use the finally block in
+                        the try and restAction functions to clean up any resources like database connections before returning from the route handler.
+                    </p>
+                    <hr>
+
+                    <h4><a id="restEx"></a>Building an REST Web Service</h4>
+
+                    <p>Below is a full launch script example for a simple REST service built using routes. Note that the Employees
+                       table is not implemented, it is just to simulate a custom database object.</p>
+                    <div class="row clearfix">
+                        <div class="col-md-1 column">
+                        </div>
+                        <div class="col-md-10 column">
+<pre>
+<code class="lua">local restAction = require "PuRest.Rest.restAction"
+local RouteMap = require "PuRest.Routing.RouteMap"
+local Route = require "PuRest.Routing.Route"
+
+local Employee = forceRequire "employees.entities.Employee"
+
+local restApi = RouteMap(false, false)
+
+restApi.addRoute(Route("addEmployee", "POST", "/api/employees", function (_, _, httpState)
+    return restAction( function (result)
+        local employee = httpState.request.body
+
+        result.data = Employee.addEmployee(employee)
+
+        httpState.response.status = 201
+    end, httpState, function ()
+        Employee.cleanup()
+    end)
+end))
+
+restApi.addRoute(Route("getEmployee", "GET", "/api/employees/{emp_no}", function (urlArgs, _, httpState)
+    return restAction( function (result)
+        local employee = Employee.getEmployee(urlArgs["emp_no"])
+
+        if not employee then
+            result.error = "Unable to find employee in database."
+            result.status = "ERROR"
+        else
+            result.data = employee
+        end
+    end, httpState, function ()
+        Employee.cleanup()
+    end)
+end))
+
+restApi.addRoute(Route("updateEmployee", "PUT", "/api/employees/{emp_no}", function (urlArgs, _, httpState)
+    return restAction( function (result)
+        local employee = httpState.request.body
+        employee.emp_no = urlArgs["emp_no"]
+
+        result.data = Employee.updateEmployee(employee)
+    end, httpState, function ()
+        Employee.cleanup()
+    end)
+end))
+
+restApi.addRoute(Route("deleteEmployee", "DELETE", "/api/employees/{emp_no}", function (urlArgs, _, httpState)
+    return restAction( function ()
+        Employee.deleteEmployee(urlArgs["emp_no"])
+    end, httpState, function ()
+        Employee.cleanup()
+    end)
+end))
+
+return
+{
+    routeMap = restApi
+}
+</code></pre>
+                        </div>
+                        <div class="col-md-1 column">
+                        </div>
+                    </div>
+                    <hr>
+
+                    <h3><a id="dyamicPages"></a>Dynamic Pages</h3>
+
+                    <h4><a id="lhtml"></a>Lua-HTML</h4>
+
+                    <p>PuRest server comes with a built in mechanism for embedding Lua script in HTML pages. Similar to PHP or Razor this allows you
+                       to write dynamic pages that are rendered as HTML and sent to the client. Files with the extension 'lhtml' will be processed by the server
+                       to find any Lua scriptlets, denoted by <%> or similar tags, execute them and render the resulting HTML in the HTTP response. Below is a
+                       brief example lhtml file</p>
+
+                    <div class="row clearfix">
+                        <div class="col-md-1 column">
+                        </div>
+                        <div class="col-md-10 column">
+<pre>
+<code class="lua"><%
+    local number = 10;
+    number = number * 8;
+%>
+
+&lt;p&gt;Value of number variable is: <%= number %>&lt;/p&gt;
+</code></pre>
+                        </div>
+                        <div class="col-md-1 column">
+                        </div>
+                    </div>
+
+                    <p>This will result in the following HTML when processed.</p>
+                    <div class="row clearfix">
+                        <div class="col-md-1 column">
+                        </div>
+                        <div class="col-md-10 column">
+<pre>
+<code class="html">&lt;p&gt;Value of number variable is: 80&lt;/p&gt;</code></pre>
+                        </div>
+                        <div class="col-md-1 column">
+                        </div>
+                    </div>
+
+                    <p>There are several tags that denote a Lua block in a LHTML file, each of these are explained below:</p>
+
+                    <ul>
+                        <li>The <b>&lt;% %&gt;</b> tag simply executes the Lua contained inside the percentage characters, as seen at the start in the above LHTML example.</li>
+                        <li>The <b>&lt;%= %&gt;</b> tag evaluates the Lua after the equals sign and before the last percentage sign and writes this to the HTML in place of the tag,
+                            as seen in the last line of the above LHTML example.</li>
+                        <li>The <b>&lt;%$ %&gt;</b> tag evaluates the Lua after the dollar sign and before the last percentage sign. It then takes the value that it evaluates to and serializes this
+                            to JSON, this JSON is embedded in an JavaScript eval call and written to the HTML in place of the tag, below is an example of using this tag.</li>
+
+                    </ul>
+                    <div class="row clearfix">
+                        <div class="col-md-1 column">
+                        </div>
+                        <div class="col-md-10 column">
+<pre>
+<code class="lua">&lt;script&gt;var dataSet = <%$ {1,2,3,4,5} %>;&lt;/script&gt;</code></pre>
+                        </div>
+                        <div class="col-md-1 column">
+                        </div>
+                    </div>
+
+                    <p>This will result in the following HTML when processed.</p>
+
+                    <div class="row clearfix">
+                        <div class="col-md-1 column">
+                        </div>
+                        <div class="col-md-10 column">
+<pre>
+<code class="html">&lt;script&gt;var dataSet = eval('([1,2,3,4,5])');&lt;/script&gt;</code></pre>
+                        </div>
+                        <div class="col-md-1 column">
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <h4><a id="scriptEnv"></a>Scripting Environment</h4>
+
+                    <p>When a LHTML file is processed, any Lua code executed will share an environment, several globals are
+                       defined in this environment for convenience. Below is a list of the globals available to Lua script embedded in a LHTML file.</p>
+                    <hr>
+
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>
+                                Global Name
+                            </th>
+                            <th>
+                                Type
+                            </th>
+                            <th>
+                                Description
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>model</td>
+                            <td>mixed</td>
+                            <td>Will be the data passed in, if any, to this page when it is called. Data can be provided by programmatically
+                                processing a LHTML file rather than requesting it via a URL.</td>
+                        </tr>
+                        <tr>
+                            <td>config</td>
+                            <td>table</td>
+                            <td>The current config for the site handling the page.</td>
+                        </tr>
+                        <tr>
+                            <td>url</td>
+                            <td>table</td>
+                            <td>Any URL parameters detected in the request.</td>
+                        </tr>
+                        <tr>
+                            <td>query</td>
+                            <td>table</td>
+                            <td>Represents the query string used in the request, access keys using either a string index (query["name"]) or field name (query.name). This
+                                will be set to nil if no query string was present in request.</td>
+                        </tr>
+                        <tr>
+                            <td>post</td>
+                            <td>table</td>
+                            <td>Represents any data provided in the request body, this will be set to nil if the server received no request body.</td>
+                        </tr>
+                        <tr>
+                            <td>state</td>
+                            <td>HttpState</td>
+                            <td>Current state of the HTTP request that prompted the processing of the page. See the <a href="#httpState">HttpState Class</a> section for more
+                                detailed information on HttpState objects.</td>
+                        </tr>
+                        <tr>
+                            <td>view</td>
+                            <td>table</td>
+                            <td>Temporary data store for passing information between Lua scriptlets. Local variables in LHTML pages are scoped to the block of Lua code they are
+                                declared in, so use this table to pass data between blocks without declaring globals. This is discarded after processing a dynamic page.</td>
+                        </tr>
+                        <tr>
+                            <td>try</td>
+                            <td>"PuRest.Util.ErrorHandling.try" function</td>
+                            <td>Quick import of the try catch functionality, see the <a href="#errHandling">Error Handling</a> see on how to use this function to manage errors.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <h4><a id="viewReqParam"></a>Request Parameters</h4>
+
+                    <p>Using the globals url, query, post and state in a LHTML view environment you can access the request parameters in the same manner as with route handler. Refer to the
+                        <a href="#reqParams">Request Parameters</a> section in Route Handling for more info.</p>
+                    <hr>
+
+                    <h4><a id="passData"></a>Passing Custom Data to Pages</h4>
+
+                    <p>As stated in the environment section, the environment variable model will hold data passed to a page. To do this you call the function 'processView' found in
+                       the module "PuRest.View.processView". This function allows you to specify a page name and data to be provided to that page. Below is an example.</p>
+
+                    <p>The 'processView' function being used in a Route defined in launch script:</p>
+
+                    <div class="row clearfix">
+                        <div class="col-md-1 column">
+                        </div>
+                        <div class="col-md-10 column">
+<pre>
+<code class="lua">local processView = require "PuRest.View.processView"
+local Route = require "PuRest.Routing.Route"
+
+local route = Route("name", "GET", "/index", function (urlArgs, queryStringArgs, httpState, siteConfig)
+    local model =
+    {
+        number = 5
+    }
+
+    -- This line is important, as processView will not set the response content type for you.
+    httpState.response.responseFormat = "text/html"
+
+    -- Provide page name, data model and config for site handling request. Returning the result
+    -- of processView sets this as the response body, note that this needs to be enabled in the site config
+    -- (this is enabled by default).
+    return processView("index", model, siteConfig)
+
+    -- The parameters shown above are the mandatory ones, and model can be set to nil.
+    -- You can pass more information to allow the view to have access to the full range of
+    -- request parameters. See below:                                         -- You can set the content type
+    --                                                                        -- using the last parameter.
+    --  processView("index", model, siteConfig, urlArgs, queryStringArgs, httpState, "text/html")
+end)
+
+routeMap.addRoute(route)
+</code></pre>
+                        </div>
+                        <div class="col-md-1 column">
+                        </div>
+                    </div>
+
+                    <p>The index.lhtml file being called:</p>
+
+                    <div class="row clearfix">
+                        <div class="col-md-1 column">
+                        </div>
+                        <div class="col-md-10 column">
+<pre>
+<code class="lua"><%
+    local number = model.number;
+    view.number = number * 10;
+%>
+
+&lt;p&gt;Value of number variable is: <%= view.number %>&lt;/p&gt;
+</code></pre>
+                        </div>
+                        <div class="col-md-1 column">
+                        </div>
+                    </div>
+
+                    <p>Resulting HTML sent in the HTTP response:</p>
+                    <div class="row clearfix">
+                        <div class="col-md-1 column">
+                        </div>
+                        <div class="col-md-10 column">
+<pre>
+<code class="html">&lt;p&gt;Value of number variable is: 50&lt;/p&gt;</code></pre>
+                        </div>
+                        <div class="col-md-1 column">
+                        </div>
+                    </div>
+
+                    <p>Be sure to read the comments in the first code snippet as you can call 'processView' with different parameters, and the parameters provided
+                       will affect what data is available inside the LHTML environment. Note that any page requested by file name will have all available request data passed
+                       to it.</p>
+                    <hr>
+
+                    <h4><a id="mvcErrHandling"></a>Error Handling</h4>
+
+                    <p>Error handling in LHTML views is the basically the same as when you are handling a route, and you can import the same PuRest modules to deal with exceptions. Note that when a
+                       LHTML file throws an error during processing the error message and stack trace will be added to a HTTP 500 response page and sent to the client. See the
+                        <a href="#errHandling">Error Handling</a> section in Route Handling for more information.</p>
+                    <hr>
+
+                    <h4><a id="mvEx"></a>Building an MVC Web App</h4>
+
+                    <p>Using LHTML files and the 'processView' module function you can build an MVC website in site launch scripts. The controller is simply the route
+                       handlers used to handle requests, the views are made up of LHTML files and the models are custom Lua values passed to the views using 'processView'. An example
+                       implementation is shown below.</p>
+
+                    <p>The launch script for the site, which contains two views: 'index' and 'employee'</p>
+                    <div class="row clearfix">
+                        <div class="col-md-1 column">
+                        </div>
+                        <div class="col-md-10 column">
+<pre>
+<code class="lua">local processView = require "PuRest.View.processView"
+local Route = require "PuRest.Routing.Route"
+local RouteMap = require "PuRest.Routing.RouteMap"
+local try = require "PuRest.Util.ErrorHandling.try"
+
+local Employee = forceRequire "employees.entities.Employee"
+
+local employeesController =
+{
+    index = Route("index", {"GET", "POST"}, "/", function (_, _, httpState, siteConfig)
+        local post = httpState.request.body
+        local model = {}
+
+        if type(post) == "table" then
+            local postStatus
+
+            try( function()
+                local employee = post
+                local mode = post.mode
+                local emp_no = post.emp_no
+
+                if mode == "edit" then
+                    Employee.updateEmployee(employee)
+                    postStatus = "Updated employee"
+                elseif mode == "delete" then
+                    Employee.deleteEmployee(emp_no)
+                    postStatus = "Deleted employee"
+                elseif mode == "create" then
+                    Employee.addEmployee(employee)
+                    postStatus = "Added employee"
+                end
+            end)
+            .catch( function (ex)
+                postStatus = string.format("Error while processing POST data")
+                print(ex)
+            end)
+
+            model.postStatus = postStatus
+        end
+
+        httpState.response.responseFormat = "text/html"
+        return processView("index", model, siteConfig)
+    end),
+
+    employee = Route("employee", "GET", "/employee", function (_, query, httpState, siteConfig)
+        local model = {}
+
+        if query then
+            local mode = query.mode
+            local emp_no = query.emp_no
+
+            if mode == "edit" then
+                model.employee = Employee.getEmployee(emp_no)
+            end
+
+            model.mode = mode
+        end
+
+        httpState.response.responseFormat = "text/html"
+        return processView("employee", model, siteConfig)
+    end)
+}
+
+local routes = RouteMap(true, true)
+
+routes.addRoute(employeesController.index)
+routes.addRoute(employeesController.employee)
+
+return
+{
+    routeMap = routes
+}
+</code></pre>
+                        </div>
+                        <div class="col-md-1 column">
+                        </div>
+                    </div>
+                    <p>As you can see the two controller methods make use of the query string and POST data of requests to preform
+                       conditional actions before rendering the view with appropriate data. The index and employee view files are not shown
+                       here but can be seen in the employees example web app provided with PuRest server; these have been omitted as they use some
+                       frontend frameworks that not all developers will have used before (Twitter Bootstrap and Knockout.JS)</p>
+                    <hr>
+
+                    <h3><a id="security"></a>Security</h3>
+
+                    <h4><a id="https"></a>HTTPS Setup</h4>
+
+                    <p>As denoted in the <a href="#configuration">Server Configuration</a> section PuRest Web Server supports HTTPS communication using OpenSSL. To
+                       enable and use HTTPS you will need to update the 'https' key in the server config. Follow these steps: </p>
+                    <ol>
+                        <li>Make sure 'https.enabled' is set to true to enable HTTPS</li>
+                        <li>Set 'https.port' to a valid and free port number</li>
+                        <li>Enter the path to your encryption key in 'https.key' (PEM format required)</li>
+                        <li>Enter the path to your certificate file in 'https.certificate' (PEM format required)</li>
+                    </ol>
+                    <p>Note that if you want to know more about configuration options refer to the <a href="#configuration">Server Configuration</a> section, also see the
+                       <a href="https://github.com/brunoos/luasec/wiki">LuaSec 0.5 documentation</a> as PuRest Web Server uses this library to encrypt socket communications.</p>
+                    <hr>
+
+                    <h4><a id="auth"></a>HTTP Authentication</h4>
+
+                    <p>PuRest Web Server supports both Basic and Digest methods of HTTP authentication. If you use Basic authentication for a website it is recommended that you
+                       only do so over HTTPS as it transmits passwords in more or less plain text (Base64 encoding). The 'authentication' key in the config for a site controls how a site authenticates requests, see the
+                        <a href="#siteConf">Site Configuration</a> section for a more detailed explaination of the site config keys that deal with HTTP Authentication.</p>
+                    <p>The module "PuRest.Security.SecurityProvider" provides the class SecurityProvider which allows a site to handle HTTP authentication.
+                       Below is a example launch script that sets up HTTP authentication:</p>
+
+                    <div class="row clearfix">
+                        <div class="col-md-1 column">
+                        </div>
+                        <div class="col-md-10 column">
+<pre>
+<code class="lua">local generateSiteConfig = require "PuRest.Config.generateSiteConfig"
+local SecurityProvider = require "PuRest.Security.SecurityProvider"
+
+local siteConfig = generateSiteConfig(true)
+
+-- Enable HTTP Authentication.
+siteConfig.authentication.enableAuthentication = true
+
+-- If true this will make every request require authentication, otherwise the
+-- siteConfig.authentication.authenticationRouteMap RouteMap will be used to match
+-- routes that require HTTP Authentication.
+siteConfig.authentication.requireAuthenticationEverywhere = false
+
+
+-- Security provider instance. Provide the name of the site and a method of authentication.
+siteConfig.authentication.securityProvider = SecurityProvider(siteConfig.name, "Digest")
+
+-- This handler will be called when a request is made with HTTP authentication data present.
+siteConfig.authentication.securityProvider.authorize = function (authorizationData)
+    -- If you use digest authentication return whether the user exists and the password for the user, if
+    -- using basic authentication return a boolean indicating whether the user is authorized or not.
+    return authorizationData and authorizationData.userName:lower() == "user", "password"
+end
+
+-- Create a RouteMap instance to indicate routes protected by HTTP Authentication.
+siteConfig.authentication.authenticationRouteMap = RouteMap(false, false)
+siteConfig.authentication.authenticationRouteMap.addRoute(Route("authenticationTest", "*", "/authentication_test.html",
+    function() end))
+
+-- Return table to server to load config.
+return
+{
+    siteConfig = siteConfig
+}
+</code></pre>
+                        </div>
+                        <div class="col-md-1 column">
+                        </div>
+                    </div>
+
+                    <p>
+                        If a client requests 'authentication_test.html' the server will issue a 401 unauthorized response, when the client sends a request
+                        with authentication data in the HTTP headers the handler in the SecurityProvider instance will be called, and if this returns true,
+                        the client will receive the resource requested.
+                    </p>
+
+                    <hr>
+
+                    <h3><a id="php"></a>PHP Integration</h3>
+
+                    <p>PuRest Web Server supports running PHP scripts using a standard PHP interpreter. If a file with the extension 'php' is requested it will be
+                        feed to the interpreter and the output returned to the client with a MIME type of HTML.</p>
+
+                    <hr>
+                    <h4><a id="phpSetup"></a>Setup</h4>
+
+                    <p>See the <a href="#configuration">Server Configuration</a> section, specifically the 'phpBinPath' key which should be the path to a valid PHP interpreter binary. Once this
+                       is set correctly you can use PHP scripts.</p>
+                    <hr>
+
+                    <h4><a id="phpReqParam"></a>Request Parameters</h4>
+
+                    <p>The server will pass any available request parameters to the PHP script, these include URL arguments, Query String arguments and the current
+                       state of the HTTP request. The values are passed to the PHP interpreter as JSON, therefore you can not add headers or set the response content
+                       from a PHP script. Below shows how to access these from within your PHP script.</p>
+
+
+                    <div class="row clearfix">
+                        <div class="col-md-1 column">
+                        </div>
+                        <div class="col-md-10 column">
+<pre>
+<code class="php">&lt;?php
+    $urlArgs = json_decode($argv[1]));
+    $queryStringArgs = json_decode($argv[2]);
+    $post = json_decode($argv[3]);
+    $httpState = json_decode($argv[4]);
+?&gt;
+</code></pre>
+                        </div>
+                        <div class="col-md-1 column">
+                        </div>
+                    </div> <hr>
+
+                    <h4><a id="phpManual"></a>Loading PHP Files Manually</h4>
+
+                    <p>You can manually load PHP files using the module "PuRest.Php.renderPhp", which
+                        returns the 'renderPhp' function, below is an example of manual PHP file processing in a Route handler.</p>
+
+                    <div class="row clearfix">
+                        <div class="col-md-1 column">
+                        </div>
+                        <div class="col-md-10 column">
+<pre>
+<code class="lua">local renderPhp = require "PuRest.Php.renderPhp"
+local Route = require "PuRest.Routing.Route"
+
+local route = Route("name", "GET", "/index", function (urlArgs, queryStringArgs, httpState, siteConfig)
+    -- This line is important, as renderPhp will not set the response content type for you.
+    httpState.response.responseFormat = "text/html"
+
+    -- Mandatory arguments here are the path to the PHP file, relative to the site directory, and
+    -- the config of the site rendering the PHP file.
+    return renderPhp("index.php", siteConfig)
+
+    -- You can also specify the request parameters and HttpState object to pass these to the PHP script.
+    -- return renderPhp("index.php", siteConfig, urlArgs, queryStringArgs, httpState)
+end)
+</code></pre>
+                        </div>
+                        <div class="col-md-1 column">
+                        </div>
+                    </div>
+                    <hr>
+
+                    <h4><a id="phpErrHandling"></a>Error Handling</h4>
+
+                    <p>Any errors loading the PHP interpreter or running the PHP script will be report to the client as a HTTP 500 page, detailing the error.</p>
+                    <hr>
+
+                    <h3><a id="db"></a>Connecting to Databases</h3>
+
+                    <h4><a id="libs"></a>Available Libraries</h4>
+
+                    <p>Lua has many database client libraries available, see <a href="http://lua-users.org/wiki/DatabaseAccess">here</a> on the Lua-Users Wiki for a list of the most well known libraries. PuRest Web Server
+                       recommends the <a href="https://code.google.com/p/luadbi/">LuaDbi library</a> and has a simple, but useful, API built on top of this for working with databases. LuaDbi was chosen because of it's broad database server support, to
+                       quote the documentation, 'Currently LuaDBI supports DB2, Oracle, MySQL, PostgreSQL and SQLite databases with native database drivers'. The installation guide at the start of this document installs
+                       the MySQL driver along with LuaDbi. However you can use a package manager to import more native drivers if you need to connect to different database types.</p>
+                    <p>Note if you wish to use ODBC style connections, say for SQLServer, check out the <a href="https://github.com/moteus/lua-odbc/">Lua-ODBC library</a>.</p>
+                    <hr>
+
+                    <h4><a id="dbi"></a>DbiDatabaseInterface</h4>
+
+                    <p>The module "PuRest.Database.DbiDatabaseInterface" returns the DbiDatabaseInterface class. This works with the LuaDbi library
+                       to provide a convenient wrapper for database connections, and shorthand methods for running prepared SQL and preforming select and delete operations.
+                       Preforming a lookup/delete is done by calling metamethods, these are methods with fixed patterns but part of the name can be
+                       different to implictly specify a parameter. See below for an example of how this works in practice.
+                    </p>
+
+                    <div class="row clearfix">
+                        <div class="col-md-1 column">
+                        </div>
+                        <div class="col-md-10 column">
+<pre>
+<code class="lua">local DbiDatabaseInterface = require "PuRest.Database.DbiDatabaseInterface"
+
+-- Configuration table for connecting to the database.
+local dbProps =
+{
+    driver = "MySQL",
+    dbName = "employees",
+    user = "root",
+    password = "password",
+    host = "localhost",
+    port = "3306"
+}
+
+-- Mandatory parameter is a table with the exact keys as above, used to connect to the database. The second
+-- parameter is 'keepAlive', a bool indicated whether to reconnect to the database if the connection is broken
+-- for any reason; this will be done before executing queries. Third parameter here is a bool indicating whether
+-- to not commit changes to the database right away, you then call the commit method to commit any changes.
+local db = DbiDatabaseInterface(dbProps)
+
+-- This method follows the pattern get{tableName}ById, it will return the rows from the 'employees' table,
+-- filtering by the 'emp_no' column value. Rows are return as associative arrays.
+local employee = db.getEmployeesById("emp_no", 0)
+
+-- Get all rows in the 'employees' database, the pattern here is get{tableName}.
+local employees = db.getEmployees()
+
+-- Delete rows using the same column value filtering as above. Pattern is delete{tableName}ById.
+db.deleteEmployeesById("emp_no", 0)
+
+-- Prepared statements can be executed with a table of parameters.
+local sql =
+[[INSERT INTO employees
+(birth_date, first_name, last_name, gender, hire_date)
+VALUES(?, ?, ?, ?, ?)]]
+
+-- Third parameter states if the statement returns results, if true no rows will be received from DB
+-- after execution, instead nil and the number of rows affected will be returned.
+-- If false/nil the rows resulting from the query and the number of rows affected will be returned.
+db.execQuery(sql,
+{
+    "1960-01-01",
+    "jhon",
+    "smith",
+    "M",
+    "1980-03-01"
+}, true)
+
+-- Close connection to DB.
+db.close()
+</code></pre>
+                        </div>
+                        <div class="col-md-1 column">
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <h3><a id="admin"></a>Server Admin App</h3>
+
+                    <p>PuRest Web Server comes with a small web app that allows administration of the server without
+                       having to look over logs or directories. In a normal installation this can be accessed by going
+                       to 'http://&lt;host&gt;/admin/', where host is a name PuRest is listening on.</p>
+
+                    <h4><a id="siteList"></a>Site Listings (Web Apps)</h4>
+
+                    <p>In this area you can see the sites that are currently installed, and the routes that have been
+                       registered in their launch scripts. See below for an example of this screen.</p>
+
+                    <div class="row clearfix">
+                        <div class="col-md-1 column">
+                        </div>
+                        <div class="col-md-4 column">
+                            <img src="img/admin_web_apps.png" alt="Web Apps Listings"/>
+                        </div>
+                        <div class="col-md-4 column">
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <h4><a id="logs"></a>Logs (Server Logs)</h4>
+
+                    <p>You can browse the current server and request worker thread logs, you can refresh this
+                       using the button beside the log type drop down menu.</p>
+
+                    <div class="row clearfix">
+                        <div class="col-md-1 column">
+                        </div>
+                        <div class="col-md-4 column">
+                            <img src="img/admin_server_log.png" alt="Server logs"/>
+                        </div>
+                        <div class="col-md-4 column">
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <h4><a id="perf"></a>Performance</h4>
+
+                    <p>The immediate performance of the server process can be monitored from this screen. Statistics shown are
+                       memory usage, CPU usage, number of active threads and uptime in seconds. Below is a example of the charts
+                       that output the information.
+                    </p>
+
+                    <div class="row clearfix">
+                        <div class="col-md-1 column">
+                        </div>
+                        <div class="col-md-4 column">
+                            <img src="img/admin_performance.png" alt="Web Server Performance"/>
+                        </div>
+                        <div class="col-md-4 column">
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!--<h4><a id="sessions"></a>Sessions</h4>
+
+                    <p>content here</p>
+                    <hr>
+
+                    <h4><a id="qTests"></a>Quick Tests</h4>
+
+                    <p>content here</p>
+                    <hr>
+
+                    <h3><a id="debugging"></a>Debugging</h3>
+
+                    <h4><a id="sLogs"></a>Server Logs</h4>
+
+                    <p>content here</p>
+                    <hr>
+
+                    <h4><a id="lDebuggers"></a>Lua Debuggers</h4>
+
+                    <p>content here</p>-->
+
+                    <span id="templateOut"></span>
+                </div>
+            </div>
+            <div class="row clearfix">
+                <div class="col-md-12 column">
+                    <hr/>
+                    <small>Matthew Snoddy - 2015</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function generateTemplateFromHeadings () {
+        var out = "";
+        var headerTemplate = '<h3><a id="#ID#"></a>#NAME#</h3>';
+        var sectionTemplate = '<h4><a id="#ID#"></a>#NAME#</h4><p>content here</p><hr/>';
+
+        $.each($(".list-group").children(), function (idx, child) {
+            if ($(child).is("a")) {
+                var header = headerTemplate;
+                header = header.replace("#ID#", $(child).attr("href").replace("#", ""));
+                header = header.replace("#NAME#", $(child).text());
+
+                out = out + header
+            } else {
+                var section = sectionTemplate;
+                section = section.replace("#ID#", $(child).find("a").attr("href").replace("#", ""));
+                section = section.replace("#NAME#", $(child).find("a").text());
+
+                out = out + section
+            }
+        });
+
+        $("#templateOut").html(out);
+    }
+</script>
+
+</body>
+</html>
