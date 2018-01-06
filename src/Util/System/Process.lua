@@ -1,3 +1,4 @@
+local methodProxy = require "PuRest.Util.ParameterPassing.methodProxy"
 local Types = require "PuRest.Util.ErrorHandling.Types"
 local validateParameters = require "PuRest.Util.ErrorHandling.validateParameters"
 
@@ -39,14 +40,10 @@ local function Process (path, humanReadableName, args)
 	local function readAndCloseStream (stream, streamType, standardErrorFilename)
 		local out, readErr = stream:read('*all')
 
-		pcall(function()
-			stream:close()
-		end)
+		pcall(methodProxy(stream, "close"))
 
 		if streamType == "err" then
-			pcall(function()
-				os.remove(standardErrorFilename)
-			end)
+			pcall(os.remove, standardErrorFilename)
 		end
 
 		if not out and readErr then
