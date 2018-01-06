@@ -4,6 +4,30 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "build",
+            "type": "shell",
+            "command": "powershell ./buildAndRun.ps1",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "build_wsl",
+            "type": "shell",
+            "command": "./wsl_cmd.bat ./build.ps1"
+        },
+        {
+            "label": "startServer",
+            "type": "shell",
+            "command": "powershell ./build/release/startServer.ps1"
+        },
+        {
+            "label": "startServer_wsl",
+            "type": "shell",
+            "command": "./wsl_cmd.bat ./build/release/startServer.ps1"
+        },
+        {
             "label": "buildAndRun",
             "type": "shell",
             "command": "powershell ./buildAndRun.ps1"
@@ -11,7 +35,7 @@
         {
             "label": "buildAndRun_wsl",
             "type": "shell",
-            "command": "./buildAndRun_wsl.bat"
+            "command": "./wsl_cmd.bat ./buildAndRun.ps1"
         }
     ]
 }
