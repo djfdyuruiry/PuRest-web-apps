@@ -17,7 +17,7 @@ local function validateRouteMap (routeMap)
 			routeExists = {routeMap.routeExists, Types._function_},
 			getMatchingRoute = {routeMap.getMatchingRoute, Types._function_},
 			handleRoute = {routeMap.handleRoute, Types._function_}
-		}, "validateRouteMap")
+		})
 end
 
 return validateRouteMap

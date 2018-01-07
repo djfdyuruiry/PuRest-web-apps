@@ -1,7 +1,6 @@
+local luaFileSystem = require "lfs"
 local luaLinq = require "lualinq"
 local from = luaLinq.from
-
-local luaFileSystem = require "lfs"
 
 local getNextDirectoryEntry = require "PuRest.Util.File.getNextDirectoryEntry"
 local log = require "PuRest.Logging.FileLogger"

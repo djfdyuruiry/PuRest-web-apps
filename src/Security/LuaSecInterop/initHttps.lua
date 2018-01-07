@@ -36,7 +36,7 @@ local function initHttps (socketFileDescriptor)
 	validateParameters(
 		{
 			socketFileDescriptor = {socketFileDescriptor, Types._number_}
-		}, "initHttps")
+		})
 
 	local dataPipe = convertClientSocketFileDescriptorToHttpDataPipe(socketFileDescriptor)
 	local host, port = dataPipe.getClientPeerName()

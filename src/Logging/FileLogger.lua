@@ -30,8 +30,7 @@ local function checkLogFileSize (logPath)
     validateParameters(
         {
             logPath = {logPath, Types._string_}
-        },
-        "FileLogger.checkLogFileSize")
+        })
 
     nextLogCheck = Time.getTimeNowInSecs() + ServerConfig.logging.clearDownIntervalInSecs
 
@@ -59,8 +58,7 @@ local function logToFile (threadId, msg, level)
 			threadId = {threadId, Types._number_},
 			msg = {msg, Types._string_},
 			level = {level, Types._string_}
-		},
-		"FileLogger.log")
+		})
 
 	local logToUse = threadId < 1 and LogFiles.server or string.format(LogFiles.worker, threadId)
 	local logPath = (string.format("%s/%s", ServerConfig.logging.logPath, logToUse):gsub("//", "/"))
@@ -73,6 +71,7 @@ local function logToFile (threadId, msg, level)
 
 	logger:log(level, msg)
 
+	-- TODO: wat.jpeg -> calling collectgarbage() directly is evil
 	-- Force log to flush to file...
 	logger = nil
 	collectgarbage()

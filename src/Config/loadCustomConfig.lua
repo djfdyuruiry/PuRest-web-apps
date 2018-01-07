@@ -22,7 +22,7 @@ local function loadCustomConfig (customConfigFile, log)
 		customConfig = config
 	end)
 	.catch( function (ex)
-		log(string.format("Could not load custom config file '%s': %s", customConfigFile, ex), LogLevelMap.ERROR)
+		log(string.format("Could not load custom server config file '%s': %s", customConfigFile, ex), LogLevelMap.ERROR)
 	end)
 
 	-- Validate the loaded custom config.
@@ -33,11 +33,11 @@ local function loadCustomConfig (customConfigFile, log)
 	end)
 	.catch( function (ex)
 		customConfig = nil
-		log(string.format("Could not validate custom config file '%s': %s", customConfigFile, ex), LogLevelMap.ERROR)
+		log(string.format("Could not validate custom server config file '%s': %s", customConfigFile, ex), LogLevelMap.ERROR)
 	end)
 
 	if customConfigFile and not customConfig then
-		log("Loading default config as loading custom config failed.", LogLevelMap.WARN)
+		log("Loading custom server config failed, using default server config", LogLevelMap.WARN)
 		return DefaultConfig
 	end
 

@@ -12,8 +12,7 @@ local function log(msg, level)
     validateParameters(
         {
             msg = {msg, Types._string_}
-        },
-        "StdoutLogger.log")
+        })
 
 	if type(level) == Types._number_ then
 		for k, v in pairs(LogLevelMap) do

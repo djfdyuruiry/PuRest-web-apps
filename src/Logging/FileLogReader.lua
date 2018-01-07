@@ -14,8 +14,7 @@ local function getMessagesFromLogFile (logPath, buildMsgTable)
     validateParameters(
         {
             logPath = {logPath, Types._string_}
-        },
-        "FileLogReader.getMessagesFromLogFile")
+        })
 
 	local messages = buildMsgTable and {} or ""
 
@@ -45,8 +44,7 @@ local function getLogFilePath (logFile)
     validateParameters(
         {
             logFile = {logFile, Types._string_}
-        },
-        "FileLogReader.getLogFilePath")
+        })
 
 	return (string.format("%s/%s", ServerConfig.logging.logPath, logFile):gsub("//", "/"))
 end

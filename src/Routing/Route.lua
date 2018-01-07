@@ -1,6 +1,5 @@
 local lualinq = require "lualinq"
 local from = lualinq.from
-
 local Regex = require "rex_pcre"
 
 local log = require "PuRest.Logging.FileLogger"
@@ -35,8 +34,7 @@ local function Route (name, httpMethods, routePattern, action, patternIsRegex, r
 			httpMethods = {httpMethods, Types._table_},
 			routePattern = {routePattern, Types._string_},
 			action = {action, Types._function_}
-		}
-		, "Route")
+		})
 
 	local routeHttpMethods
 	local routeRegex
@@ -50,8 +48,7 @@ local function Route (name, httpMethods, routePattern, action, patternIsRegex, r
 				routePattern = {routePattern, Types._string_},
 				urlPart = {urlPart, Types._string_},
 				includeOptionalTrailingSlash = {includeOptionalTrailingSlash, Types._boolean_}
-			}
-			, "Route.detectUrlPart")
+			})
 
         local urlParamName = urlPart:match("{(.+)}")
 		local urlPartName = urlPart:match("(.+)")
@@ -80,8 +77,7 @@ local function Route (name, httpMethods, routePattern, action, patternIsRegex, r
 		validateParameters(
 			{
 				urlPattern = {urlPattern, Types._string_}
-			}
-			, "Route.compileRegex")
+			})
 
 		local routePattern = ""
 
@@ -137,8 +133,7 @@ local function Route (name, httpMethods, routePattern, action, patternIsRegex, r
 		validateParameters(
 			{
                 location = { location, Types._string_}
-			}
-			, "Route.matchesRoute")
+			})
 
 		if not supportsHttpMethod(httpMethod) then
 			return nil
@@ -164,8 +159,7 @@ local function Route (name, httpMethods, routePattern, action, patternIsRegex, r
                 urlParams = { urlParams, Types._table_},
 				httpState = {httpState, Types._table_},
 				siteConfig = {siteConfig, Types._table_},
-			}
-			, "Route.call")
+			})
 
 		return action(urlParams, queryStringArgs, httpState, siteConfig)
 	end
@@ -181,8 +175,7 @@ local function Route (name, httpMethods, routePattern, action, patternIsRegex, r
 			{
 				route0 = {route0, Types._table_},
 				route1 = {route1, Types._table_}
-			}
-			, "Route.equals")
+			})
 
 		return route0.routePattern == route1.routePattern and
 			route0.supportsHttpMethod(route1.httpMethods)

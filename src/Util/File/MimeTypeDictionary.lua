@@ -1,6 +1,7 @@
 --- Dictionary of file types to MIME types.
 local mimeTypeDictionary = {}
 
+-- TODO: clean this up
 mimeTypeDictionary["*"] = "application/unknown"
 mimeTypeDictionary["3dm"] = "x-world/x-3dmf"
 mimeTypeDictionary["3dmf"] = "x-world/x-3dmf"

@@ -36,7 +36,7 @@ local function executePhpScript (phpBinPath, absoluteFilename, urlArgs, queryStr
 		{
 			phpBinPath = {phpBinPath, Types._string_},
 			absoluteFilename = {absoluteFilename, Types._string_}
-		}, "renderPhp.executePhpScript")
+		})
 
 	local phpInterpreter = Process(phpBinPath, "PHP Interpreter",
 		{
@@ -66,7 +66,7 @@ local function renderPhp (filename, siteConfig, urlArgs, queryStringArgs, httpSt
 		{
 			filename = {filename, Types._string_},
 			siteConfig = {siteConfig, Types._table_},
-		}, "renderPhp")
+		})
 
 	if not ServerConfig.phpBinPath then
 		error("Unable to get path for PHP binary. " .. CHECK_PHP_VARS_MSG)

@@ -70,8 +70,7 @@ local contentTypes =
 	},
 }
 
-return
-setmetatable(contentTypes,
+return setmetatable(contentTypes,
 	{
 		__index = function (tbl, key)
 			local entry = rawget(tbl, key)

@@ -29,7 +29,7 @@ local function RouteMap (fileServingEnabled, directoryServingEnabled)
 	{
 		fileServingEnabled = {fileServingEnabled, Types._boolean_},
 		directoryServingEnabled = {directoryServingEnabled, Types._boolean_}
-	}, "RouteMap")
+	})
 
 	local routes = {}
 
@@ -42,7 +42,7 @@ local function RouteMap (fileServingEnabled, directoryServingEnabled)
 		validateParameters(
 			{
 				route = {route, Types._table_}
-			}, "RouteMap.routeExists")
+			})
 
 		if from(routes):contains(function(r) return r == route; end) then
 			return true
@@ -61,7 +61,7 @@ local function RouteMap (fileServingEnabled, directoryServingEnabled)
 		validateParameters(
 			{
 				route = {route, Types._table_}
-			}, "RouteMap.addRoute")
+			})
 
 		if routeExists(route) then
 			return false
@@ -81,7 +81,7 @@ local function RouteMap (fileServingEnabled, directoryServingEnabled)
 		validateParameters(
 			{
 				route = {route, Types._table_}
-			}, "RouteMap.removeRoute")
+			})
 
 		if not routeExists(route) then
 			return false
@@ -107,9 +107,9 @@ local function RouteMap (fileServingEnabled, directoryServingEnabled)
 		validateParameters(
 			{
                 location = { location, Types._string_}
-			}, "RouteMap.getMatchingRoute")
+			})
 
-		for _,r in pairs(routes) do
+		for _, r in pairs(routes) do
 			local isMatch, captures = r.matchesRoute(location, httpMethod)
 
 			if isMatch then
@@ -143,7 +143,7 @@ local function RouteMap (fileServingEnabled, directoryServingEnabled)
 			{
 				httpState = {httpState, Types._table_},
 				siteConfig = {siteConfig, Types._table_}
-			}, "RouteMap.handleRoute")
+			})
 
 		local timer = Timer()
 		local match = getMatchingRoute(httpState.request.location, httpState.request.method)

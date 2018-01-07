@@ -64,7 +64,7 @@ local function SecurityProvider (realm, authenticationType)
                 authorizationData = {authorizationData, Types._table_},
                 realm = {realm, Types._string_},
                 logProxyFunction = {logProxyFunction, Types._function_}
-            }, "SecurityProvider.buildDigest")
+            })
 
 		local a1 = string.format("%s:%s:%s", authorizationData.userName, realm, authorizationData.password)
 		local a2 = string.format("%s:%s", authorizationData.requestMethod, authorizationData.requestPath)
@@ -109,7 +109,7 @@ local function SecurityProvider (realm, authenticationType)
                 httpState = {httpState, Types._table_},
                 realm = {realm, Types._string_},
                 logProxyFunction = {logProxyFunction, Types._function_}
-            }, "SecurityProvider.handleUnauthorized")
+            })
 
 		if authorizationData then
 			logProxyFunction(string.format("Unable to authorize User '%s'.", authorizationData.userName), LogLevelMap.INFO)
@@ -153,7 +153,7 @@ local function SecurityProvider (realm, authenticationType)
             {
                 httpState = {httpState, Types._table_},
                 logProxyFunction = {logProxyFunction, Types._function_}
-            }, "SecurityProvider.authenticate")
+            })
 
         local authorizationData = httpState.request.authorizationData
 		local realm = self.realm and self.realm or httpState.request.host
@@ -194,7 +194,8 @@ local function SecurityProvider (realm, authenticationType)
 			httpState.response.headers["Authentication-Info"] = string.format([[nextnonce="%s"]], generateNonce())
 		end
 
-		logProxyFunction(string.format("Authorized user '%s'.", httpState.request.authorizationData.userName), LogLevelMap.INFO)
+		logProxyFunction(string.format("Authorized user '%s'.", httpState.request.authorizationData.userName), 
+			LogLevelMap.INFO)
 
 		return true
 	end

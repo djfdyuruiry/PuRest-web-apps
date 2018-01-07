@@ -1,6 +1,6 @@
-local validateParameters = require "PuRest.Util.ErrorHandling.validateParameters"
 local StringUtils = require "PuRest.Util.Data.StringUtils"
 local Types = require "PuRest.Util.ErrorHandling.Types"
+local validateParameters = require "PuRest.Util.ErrorHandling.validateParameters"
 
 --- Convert a hex value to it's relevant ASCII character
 -- value.
@@ -31,8 +31,7 @@ local function parseQueryString (queryString)
 	validateParameters(
 		{
 			queryString = {queryString, Types._string_}
-		},
-		"QueryString.parseQueryString")
+		})
 
 	local queryStringDict = {}
 

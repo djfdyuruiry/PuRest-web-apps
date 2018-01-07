@@ -42,7 +42,7 @@ local function validateServerConfig (serverConfig)
 			logging_maxLogLevel = { serverConfig.logging.maxLogLevel, Types._string_},
             logging_clearDownIntervalInSecs = { serverConfig.logging.clearDownIntervalInSecs, Types._number_},
 			siteDefaults = {serverConfig.siteDefaults, Types._table_}
-		}, "validateServerConfig")
+		})
 end
 
 --- Validate the given site config.
@@ -55,7 +55,7 @@ local function validateSiteConfig (siteConfig)
 		return pcall(validateParameters,
 			{
 				siteConfig = {siteConfig, Types._table_ }
-			}, "validateSiteConfig")
+			})
 	end
 
 	return pcall(validateParameters,
@@ -79,7 +79,7 @@ local function validateSiteConfig (siteConfig)
 			siteConfig_authentication_authenticationRouteMap = {siteConfig.authentication.authenticationRouteMap, Types._table_},
 			siteConfig_logging = {siteConfig.logging, Types._table_},
 			siteConfig_logging_siteLoggingEnabled = {siteConfig.logging.siteLoggingEnabled, Types._boolean_}
-		}, "validateSiteConfig")
+		})
 end
 
 --- Validate the given config; return value is true if config validates OK, otherwise false

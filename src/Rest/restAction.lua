@@ -28,7 +28,7 @@ local function restAction (action, httpState, finallyHandler, responseFormat, er
 		{
 			action = {action, Types._function_},
 			httpState = {httpState, Types._table_}
-		}, "restAction")
+		})
 
 	local responseFormat = type(responseFormat) == Types._string_ and responseFormat or DEFAULT_RES_FORMAT
 

@@ -1,7 +1,8 @@
 local loadstring = loadstring or load
 
-local DBI = require "DBI"
+local dbi = require "DBI"
 
+local methodProxy = require "PuRest.Util.ParameterPassing.methodProxy"
 local setfenv = require "PuRest.Util.setfenv"
 local Types = require "PuRest.Util.ErrorHandling.Types"
 local validateParameters = require "PuRest.Util.ErrorHandling.validateParameters"
@@ -37,7 +38,7 @@ local DB_QUERY_METATABLE =
 }
 
 --- Provides an abstract interface for working with a database
--- on a server type that LuaDBI supports (MySQL, PostgreSQL and SQLite3).
+-- on a server type that Luadbi supports (MySQL, PostgreSQL and SQLite3).
 --
 -- This class supports calling a method with the format get{tableName} to
 -- load all the data from a given table and get{tableName}ById(idColumnName, idValue)
@@ -80,13 +81,15 @@ local function DbiDatabaseInterface (dbConfig, keepAlive, noAutoCommit)
     --            specifiers must be present to format the msg with error details.
     --
     local function detectError (obj, msg)
-        if not obj or lastError then
-            if obj and type(obj) == Types._userdata_ and obj["close"] then
-                obj:close()
-            end
-
-            error(string.format(msg, tostring(lastError or "unknown")))
+        if obj and not lastError then
+            return
         end
+
+        if obj and type(obj) == Types._userdata_ and obj["close"] then
+            pcall(methodProxy(obj, "close"))
+        end
+
+        error(string.format(msg, tostring(lastError or "unknown")))
     end
 
     --- Attempt to close the current connection with the DB.
@@ -100,7 +103,7 @@ local function DbiDatabaseInterface (dbConfig, keepAlive, noAutoCommit)
     -- specified database; an error is thrown if this fails.
     --
     local function connect ()
-        dbCon, lastError = DBI.Connect(config.driver, config.dbName, config.user, config.password, config.host, config.port)
+        dbCon, lastError = dbi.Connect(config.driver, config.dbName, config.user, config.password, config.host, config.port)
 
         detectError(dbCon, string.format("Error occurred while attempting to connect to the '%s' database%s",
             config.dbName, ": %s."))
@@ -122,14 +125,17 @@ local function DbiDatabaseInterface (dbConfig, keepAlive, noAutoCommit)
     -- reconnect to the database if there is a problem detected.
     --
 	local function ensureDbAlive ()
-		if not dbCon or not dbCon:ping() then
-            if keepAlive then
-                pcall(close)
-                connect()
-            else
-			    error(string.format("The database connection to '%s' has been closed/deleted.", config.dbName))
-            end
-		end
+        if dbCon and dbCon:ping() then
+            return
+        end    
+        
+        pcall(close)
+        
+        if not keepAlive then
+            error(string.format("The database connection to '%s' has been closed/deleted", config.dbName))
+        end
+        
+        connect()
     end
 
     --- Fetch all rows stored in a given table.
@@ -141,7 +147,7 @@ local function DbiDatabaseInterface (dbConfig, keepAlive, noAutoCommit)
 		validateParameters(
 			{
 				tableName = {tableName, Types._string_}
-			}, "DbiDatabaseInterface.getTableData")
+			})
 
 		ensureDbAlive()
 
@@ -187,7 +193,7 @@ local function DbiDatabaseInterface (dbConfig, keepAlive, noAutoCommit)
 				tableName = {tableName, Types._string_},
 				idColumn = {idColumn, Types._string_},
 				id = {id, Types._string_}
-			}, "DbiDatabaseInterface.getTableRowByPk")
+			})
 
 		tableName = tableName:lower()
 		idColumn = idColumn:lower()
@@ -235,7 +241,7 @@ local function DbiDatabaseInterface (dbConfig, keepAlive, noAutoCommit)
                 tableName = {tableName, Types._string_},
                 idColumn = {idColumn, Types._string_},
                 id = {id, Types._string_}
-            }, "DbiDatabaseInterface.deleteTableRowByPk")
+            })
 
         tableName = tableName:lower()
         idColumn = idColumn:lower()
@@ -261,7 +267,7 @@ local function DbiDatabaseInterface (dbConfig, keepAlive, noAutoCommit)
     end
 
     --- Build and run a dynamic call to the execute method of a
-    -- DBI prepared statement.
+    -- dbi prepared statement.
     --
     -- @param preparedStatement The statement to be called.
     -- @param params List of parameters to pass to statement:execute.
@@ -299,7 +305,7 @@ local function DbiDatabaseInterface (dbConfig, keepAlive, noAutoCommit)
         validateParameters(
             {
                 sql = {sql, Types._string_}
-            }, "DbiDatabaseInterface.execQuery")
+            })
 
         ensureDbAlive()
 

@@ -12,6 +12,43 @@ local Timer = require "PuRest.Util.Time.Timer"
 local Types = require "PuRest.Util.ErrorHandling.Types"
 local validateParameters = require "PuRest.Util.ErrorHandling.validateParameters"
 
+local function loadFileIntoHttpResponse(mimeType, fileName, filePath, fileHandle, 
+	siteConfig, urlArgs, queryStringArgs, httpState)
+	if mimeType == MimeTypeDictionary["lhtml"] then
+		httpState.response.responseFormat = "text/html"
+		httpState.response.content = processView(fileName:gsub("%.lhtml", ""), nil,
+												 siteConfig, urlArgs, queryStringArgs, httpState)
+
+		return
+	end
+	
+	if mimeType == MimeTypeDictionary["php"] then
+		httpState.response.responseFormat = "text/html"
+		httpState.response.content = renderPhp(fileName, siteConfig, urlArgs, queryStringArgs, httpState)
+
+		return
+	end
+
+	log(string.format("Loaded file '%s' into HTTP response.", filePath), LogLevelMap.INFO)
+	httpState.response.content = fileHandle:read("*all")
+	httpState.response.responseFormat = mimeType
+end
+
+local function okToServeFile (fileName, siteConfig)
+	local doNotServeTheseFiles = siteConfig.doNotServeTheseFiles
+
+	if #doNotServeTheseFiles < 1 then
+		return true
+	end
+
+	local numMatchingFileSets = from(doNotServeTheseFiles):where(function (fileSet)
+		local regexFileSet = (fileSet:gsub("*", ".*"))
+		return (fileName:match(regexFileSet)) ~= nil
+	end):count()
+
+	return numMatchingFileSets < 1
+end
+
 
 --- Attempt to load a file and store in the response content field of the given
 -- HTTP request. If the file is of a type that needs ran through an interpreter
@@ -34,7 +71,7 @@ local function serveFile (urlArgs, queryStringArgs, httpState, siteConfig)
 		{
 			httpState = {httpState, Types._table_},
 			siteConfig = {siteConfig, Types._table_}
-		}, "serveFile")
+		})
 
 	local timer = Timer()
 
@@ -69,18 +106,7 @@ local function serveFile (urlArgs, queryStringArgs, httpState, siteConfig)
 	end
 
 	local fileOk, fileHandle = FileSystemUtils.tryOpenFile(filePath)
-	local doNotServeFile = not fileOk
-
-	local doNotServeTheseFiles = siteConfig.doNotServeTheseFiles
-
-	if fileOk and #doNotServeTheseFiles > 0 then
-		local numMatchingFileSets = from(doNotServeTheseFiles):where(function (fileSet)
-			local regexFileSet = (fileSet:gsub("*", ".*"))
-			return (fileName:match(regexFileSet)) ~= nil
-		end):count()
-
-		doNotServeFile = (numMatchingFileSets ~= 0)
-	end
+	local doNotServeFile = (not fileOk) or (not okToServeFile(fileName, siteConfig))
 
 	if doNotServeFile then
 		log(string.format("Unable to read file '%s'", filePath), LogLevelMap.INFO)
@@ -89,20 +115,10 @@ local function serveFile (urlArgs, queryStringArgs, httpState, siteConfig)
 		error({httpErrCode = 404})
 	end
 
-	if mimeType == MimeTypeDictionary["lhtml"] then
-		httpState.response.responseFormat = "text/html"
-		httpState.response.content = processView(fileName:gsub("%.lhtml", ""), nil,
-												 siteConfig, urlArgs, queryStringArgs, httpState)
-	elseif mimeType == MimeTypeDictionary["php"] then
-		httpState.response.responseFormat = "text/html"
-		httpState.response.content = renderPhp(fileName, siteConfig, urlArgs, queryStringArgs, httpState)
-	else
-		log(string.format("Loaded file '%s' into HTTP response.", filePath), LogLevelMap.INFO)
-		httpState.response.content = fileHandle:read("*all")
-		httpState.response.responseFormat = mimeType
+	loadFileIntoHttpResponse(mimeType, fileName, filePath, fileHandle,
+		siteConfig, urlArgs, queryStringArgs, httpState)
 
-		log(string.format("Loading file into HTTP response took %s ms.", timer.endTimeNow()), LogLevelMap.DEBUG)
-	end
+	log(string.format("Loading file into HTTP response took %s ms.", timer.endTimeNow()), LogLevelMap.DEBUG)
 
 	FileSystemUtils.tryCloseFile(fileHandle)
 	FileCache.updateCache(filePath, httpState.response.content, httpState.response.responseFormat)

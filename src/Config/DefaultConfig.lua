@@ -54,6 +54,7 @@ return
 	-- Logging
 	logging =
 	{
+		-- TODO: consider allow using different log classes here (i.e. file or stdout)
 		logPath = os.getenv("PUREST_WEB") or os.getenv("PUREST"),
 		maxLogFileSize = 1024,
         clearDownIntervalInSecs = 60,
