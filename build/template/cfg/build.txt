@@ -1,1 +1,0 @@
-add DefaultConfig.lua and add another copy titled cfg.lua
