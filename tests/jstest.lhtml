@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title><%= "Form Data Test" %></title>
+	<script type="text/javascript">
+		var data = <%$ {name = "bob", age = 20} %>;
+	</script>
+</head>
+<body>
+	<table>
+		<tr>
+			<td>Name:  </td>
+			<td id="nameOut"></td>
+		</tr>
+		<tr>
+			<td>Age: </td>
+			<td id="ageOut"></td>
+		</tr>
+	</table>
+	<script type="text/javascript">
+		var outData = data || { name: "", age: ""};
+		document.getElementById("nameOut").innerHTML = outData.name;
+		document.getElementById("ageOut").innerHTML = outData.age;
+	</script>
+</body>
+</html>

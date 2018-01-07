@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title><%= "Form Data Test" %></title>
+</head>
+<body>
+	<%
+		local formData = state.request.method == "GET" and query or post
+		local numValues = 0
+
+		if type(formData) == "table" then
+			for key, value in pairs(formData) do
+				write(string.format("<p id='%s'>%s</p>", key, value))
+				numValues = numValues + 1
+			end
+		end
+
+		if numValues < 1 then
+			write("<h1>No form data passed in with request!</h1>")
+		end
+	%>
+</body>
+</html>

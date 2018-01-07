@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title><%= "Form Data Test" %></title>
+</head>
+<body>
+	<%
+		write("<h1>Successfully rendered server-side script!</h1>")
+	%>
+</body>
+</html>
