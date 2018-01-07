@@ -37,7 +37,7 @@ local function ClientRequestHandler (routeMap, siteConfig, urlNamespace)
 	validateParameters(
 		{
 			urlNamespace = {urlNamespace, Types._string_}
-		}, "ClientRequestHandler")
+		})
 
 	local siteConfig = siteConfig or ServerConfig.siteDefaults
 	local routeMap = routeMap or RouteMap()
@@ -52,7 +52,7 @@ local function ClientRequestHandler (routeMap, siteConfig, urlNamespace)
 		validateParameters(
 			{
 				msg = {msg, Types._string_}
-			}, "ClientRequestHandler.log")
+			})
 
 		logProxy(string.format("%s%s", formattedNamespaceName, msg), ...)
 	end
@@ -67,7 +67,7 @@ local function ClientRequestHandler (routeMap, siteConfig, urlNamespace)
 			{
 				httpState = {httpState, Types._table_},
 				dataPipe = {dataPipe, Types._table_}
-			}, "ClientRequestHandler.respondToRequest")
+			})
 
 		-- Prepare error page in case HTTP state has been corrupted by the route handler.
 		local corruptDataHtml = string.format(_500_HTML,
@@ -90,7 +90,7 @@ local function ClientRequestHandler (routeMap, siteConfig, urlNamespace)
 			{
 				routeHandled = {routeHandled, Types._boolean_},
 				httpState = {httpState, Types._table_}
-			}, "ClientRequestHandler.determineIfRouteHandled")
+			})
 
 		if not routeHandled then
 			local error = (returnValOrErr or "Unknown error")
@@ -136,7 +136,7 @@ local function ClientRequestHandler (routeMap, siteConfig, urlNamespace)
 			{
 				routeHandled = {routeHandled, Types._boolean_},
 				httpState = {httpState, Types._table_}
-			}, "ClientRequestHandler.tryUpdateRepsonseWithReturnValue")
+			})
 
 		if not routeHandled then
 			return routeHandled, returnValOrErr
@@ -206,33 +206,28 @@ local function ClientRequestHandler (routeMap, siteConfig, urlNamespace)
     -- @param serverState Server state to record 401 if unauthorised.
     -- @return True if client was authorised to request route, false otherwise.
     --
-	local function handleAuthentication (httpState, serverState)
-		local securityProvider = siteConfig.authentication.securityProvider or SecurityProvider()
-		local authorized = false
+	local function handleAuthentication (httpState)
+		local authConfig = siteConfig.authentication
+		local securityProvider = authConfig.securityProvider or SecurityProvider()
 
 		log("Site config has HTTP authentication enabled.", LogLevelMap.INFO)
 
-		if siteConfig.authentication.requireAuthenticationEverywhere then
+		if authConfig.requireAuthenticationEverywhere then
 			log("HTTP authentication enabled across whole site.", LogLevelMap.INFO)
-			authorized = securityProvider.authenticate(httpState, log)
-		else
-			log("HTTP authentication only enabled for specific site routes.", LogLevelMap.INFO)
-			local isProtectedRoute = siteConfig.authentication.authenticationRouteMap.getMatchingRoute(httpState.request.location, httpState.request.method)
-
-			if isProtectedRoute then
-				log("Request route is protected by HTTP authentication.", LogLevelMap.INFO)
-				authorized = securityProvider.authenticate(httpState, log)
-			else
-				log("Request route is not protected by HTTP authentication.", LogLevelMap.INFO)
-				authorized = true
-			end
+			return securityProvider.authenticate(httpState, log)
 		end
 
-		if not authorized then
-			serverState.siteErr = {httpErrCode = 401}
+		log("HTTP authentication only enabled for specific site routes.", LogLevelMap.INFO)
+		local isProtectedRoute = 
+			authConfig.authenticationRouteMap.getMatchingRoute(httpState.request.location, httpState.request.method)
+
+		if isProtectedRoute then
+			log("Request route is protected by HTTP authentication.", LogLevelMap.INFO)
+			return securityProvider.authenticate(httpState, log)
 		end
 
-		return authorized
+		log("Request route is not protected by HTTP authentication.", LogLevelMap.INFO)
+		return true
 	end
 
 	--- Try to handle the route presented in the given HTTP state.
@@ -246,20 +241,20 @@ local function ClientRequestHandler (routeMap, siteConfig, urlNamespace)
 		validateParameters(
 			{
 				httpStateWrapper = {httpStateWrapper, Types._table_}
-			}, "ClientRequestHandler.tryUpdateRepsonseWithReturnValue")
+			})
 
-		if httpStateWrapper.state then
-			local httpState = httpStateWrapper.state
-			local status, returnValOrErr, match = routeMap.handleRoute(httpState, siteConfig)
-
-			if not status and not match then
-				serverState.siteError = { httpErrCode = 404 }
-			end
-
-			return status, returnValOrErr, match
-		else
+		if not httpStateWrapper.state then
 			return false, "Unable to parse client request.", HttpState("GET", "?", "http", {}, "", {})
 		end
+
+		local httpState = httpStateWrapper.state
+		local status, returnValOrErr, match = routeMap.handleRoute(httpState, siteConfig)
+
+		if not status and not match then
+			serverState.siteError = { httpErrCode = 404 }
+		end
+
+		return status, returnValOrErr, match
 	end
 
 	--- Get the body of a request from a data pipe. Attempts to
@@ -274,7 +269,7 @@ local function ClientRequestHandler (routeMap, siteConfig, urlNamespace)
 			{
 				dataPipe = {dataPipe, Types._table_},
 				headers = {headers, Types._table_}
-			}, "ClientRequestHandler.getBody")
+			})
 
 		local body = ""
 		local contentLength = headers["Content-Length"]
@@ -309,6 +304,7 @@ local function ClientRequestHandler (routeMap, siteConfig, urlNamespace)
 	local function isWhitelistedHost (httpState, serverState)
 		local whiteList = siteConfig.hostWhitelist
 		local host, ipAddress = httpState.request.host, httpState.request.ipAddress
+		local clientHostname = Dns.tohostname(ipAddress)
 
 		local whiteListedHost = from(whiteList):where(function(h)
 			if h[1] == "*" then
@@ -320,19 +316,18 @@ local function ClientRequestHandler (routeMap, siteConfig, urlNamespace)
 			if h[2] then
 				log("Preforming host validation by DNS lookup.", LogLevelMap.INFO)
 
-				return Dns.tohostname(ipAddress) == Dns.tohostname(h[1])
-			else
-				log("Preforming host validation by string comparison.", LogLevelMap.INFO)
-				return host == h[1]
+				return clientHostname == Dns.tohostname(h[1])
 			end
+
+			log("Preforming host validation by string comparison.", LogLevelMap.INFO)
+			return host == h[1]
 		end):any()
 
 		if not whiteListedHost then
 			serverState.siteError = { httpErrCode = 403, msg = "The host you have used to access this resource is incorrect." }
 
 			log(string.format("Request was made to host '%s', which is not a whitelisted host for the site '%s'.",
-				host,
-				siteConfig.name), LogLevelMap.INFO)
+				host, siteConfig.name), LogLevelMap.INFO)
 		end
 
 		return whiteListedHost
@@ -352,10 +347,14 @@ local function ClientRequestHandler (routeMap, siteConfig, urlNamespace)
 		validateParameters(
 			{
 				dataPipe = {dataPipe, Types._table_}
-			}, "ClientRequestHandler.prepareHttpState")
+			})
 
+		if not method or not location or not protocol then	
+			log(string.format("Unable to prepare HTTP state, error parsing request parameters" +
+				": method: '%s' | location: '%s' | protocol: '%s'", 
+				tostring(method), tostring(location), tostring(protocol)), 
+				LogLevelMap.ERROR)
 
-		if not method or not location or not protocol then
 			return false
 		end
 
@@ -389,16 +388,20 @@ local function ClientRequestHandler (routeMap, siteConfig, urlNamespace)
 			{
 				dataPipe = {dataPipe, Types._table_},
 				serverState = {serverState, Types._table_}
-			}, "ClientRequestHandler.serve")
+			})
 
-		local timer = Timer();
+		local timer = Timer()
 		local httpStateWrapper =
 		{
 			state = prepareHttpState(dataPipe, serverState.method, serverState.location, serverState.protocol)
 		}
 		local hostOk = isWhitelistedHost(httpStateWrapper.state, serverState)
 		local authorised = siteConfig.authentication.enableAuthentication and
-				handleAuthentication(httpStateWrapper.state, serverState) or true
+				handleAuthentication(httpStateWrapper.state) or true
+
+		if not authorized then
+			serverState.siteErr = {httpErrCode = 401}
+		end
 
 		local routeHandled, returnValOrErr, routeMatch = false, nil, nil
 
